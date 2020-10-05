@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% load static %}
+{% block export-css %}
+<!-- DataTables -->
+<link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-responsive/css/responsive.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/cropperjs/dist/cropper.min.css" %}">
+{% endblock export-css %}
+{% block css %}
+<style type="text/css">
+img {
+  display: block;
+  max-width: 100%;
+}
+.preview {
+  overflow: hidden;
+  width: 160px; 
+  height: 160px;
+  margin: 10px;
+  border: 1px solid red;
+}
+.modal-lg{
+  max-width: 1000px !important;
+}
+</style>
+{% endblock css %}
+{% block content %}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark">Tambah Model Baru</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6 text-right">
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+
+            <form id="form-latih" onsubmit="return false;">
+              {% csrf_token %}
+
+              <div class="form-group">
+                <label for="">Simpan Model</label>
+                <select name="simpan" id="simpan" class="form-control">
+                  <option value="1">Ya</option>
+                  <option value="-1">Tidak</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="">Nama Model</label>
+                <input type="number" class="form-control" id="nama_model" name="nama_model">
+              </div>
+              
+              <div class="form-group">
+                <label for="">Pembagian Data Uji</label>
+                <input type="number" class="form-control" id="persen_uji" required placeholder="ex: 0.2 artinya 80% data latih dan 20% data uji " name="persen_uji">
+              </div>
+              <button class="btn btn-primary" type="submit" id="btn-latih">Mulai Latih</button>
+            </form>
+            
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <div class="place-contents-here">
+          
+        </div>
+
+        <!-- /.card -->
+      </div>
+      <!-- /.col -->
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<!-- /.content -->
+
+
+<template id="content-data-latih">
+  <div class="card">
+    <div class="card-header">
+      Data Latih
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+
+      <table class="table table-striped" id="table-data-latih">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>GAMBAR</th>
+            <th>FORM_FACTOR</th>
+            <th>ASPECT_RATIO</th>
+            <th>RECT</th>
+            <th>NARROW_FACTOR</th>
+            <th>PRD</th>
+            <th>PLW</th>
+            <th>IDM</th>
+            <th>ENTROPY</th>
+            <th>ASM</th>
+            <th>CONTRAST</th>
+            <th>CORRELATION</th>
+            <th>KELAS</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+      </table>
+
+    </div>
+    <!-- /.card-body -->
+  </div>
+</template>
+<template id="content-data-uji">
+  <div class="card">
+    <div class="card-header">
+      Data Latih
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+
+      <table class="table table-striped" id="table-data-latih">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>GAMBAR</th>
+            <th>FORM_FACTOR</th>
+            <th>ASPECT_RATIO</th>
+            <th>RECT</th>
+            <th>NARROW_FACTOR</th>
+            <th>PRD</th>
+            <th>PLW</th>
+            <th>IDM</th>
+            <th>ENTROPY</th>
+            <th>ASM</th>
+            <th>CONTRAST</th>
+            <th>CORRELATION</th>
+            <th>KELAS</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+      </table>
+
+    </div>
+    <!-- /.card-body -->
+  </div>
+</template>
+<template id="content-hasil-klasifikasi">
+  <div class="card">
+    <div class="card-header">
+      Data Latih
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+
+      <table class="table table-striped" id="table-data-latih">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>GAMBAR</th>
+            <th>KELAS</th>
+          </tr>
+        </thead>
+
+      </table>
+
+    </div>
+    <!-- /.card-body -->
+  </div>
+</template>
+{% endblock content %}
+
+{% block export-js %}
+{% endblock export-js %}
+
+{% block js %}
+
+<script>
+$("#form-latih").submit(function(e) {
+  e.preventDefault();
+  var URL = "{% url 'gaharu/proses_pelatihan' %}";
+  var data = new FormData($(this)[0]);
+  axios.post(URL, data)
+
+});
+</script>
+{% endblock js %}

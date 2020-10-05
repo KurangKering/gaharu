@@ -1,6 +1,5 @@
 from django.db import models
 from django_pandas.managers import DataFrameManager
-
 # Create your models here.
 
 
@@ -20,4 +19,16 @@ class Dataset(models.Model):
     kelas = models.IntegerField(null=True, blank=True)
     is_extracted = models.CharField(max_length=1, null=True, blank=True)
     pdobjects = DataFrameManager()
+
+
+class Model(models.Model):
+    title = models.CharField(max_length=256, null=True, blank=True)
+    filename = models.FileField(upload_to="models")
+    datalatih_ids = models.TextField(null=True, blank=True)
+    datauji_ids = models.TextField(null=True, blank=True)
+    accuracy = models.FloatField(null=True, blank=True)
     
+
+
+
+
