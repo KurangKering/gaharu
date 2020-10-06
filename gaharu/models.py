@@ -1,7 +1,7 @@
 from django.db import models
 from django_pandas.managers import DataFrameManager
 # Create your models here.
-
+import json
 
 class Dataset(models.Model):
     filename = models.ImageField(upload_to="uploads")
@@ -22,12 +22,23 @@ class Dataset(models.Model):
 
 
 class Model(models.Model):
-    title = models.CharField(max_length=256, null=True, blank=True)
     filename = models.FileField(upload_to="models")
     datalatih_ids = models.TextField(null=True, blank=True)
     datauji_ids = models.TextField(null=True, blank=True)
     accuracy = models.FloatField(null=True, blank=True)
+    epoch = models.IntegerField(null=True, blank=True, default=1)
     
+    @property
+    def jumlah_data_latih(self):
+        json_datalatih_ids = json.loads(self.datalatih_ids)
+
+        return  len(json_datalatih_ids)
+
+    @property
+    def jumlah_data_uji(self):
+        json_datauji_ids = json.loads(self.datauji_ids)
+
+        return  len(json_datauji_ids)
 
 
 

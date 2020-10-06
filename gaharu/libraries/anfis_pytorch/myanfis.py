@@ -15,7 +15,7 @@ from torch.utils.data import TensorDataset, DataLoader
 #sfsd
 import numpy as np
 from . import anfis
-from .membership import make_gauss_mfs, make_anfis
+from .membership import make_gauss_mfs, make_anfis, make_anfis_modified
 from .import experimental
 
 def make_one_hot(data, num_categories, dtype=torch.float):
@@ -118,6 +118,23 @@ def train_hybrid(data_master, epoch=1):
     print('{} of {} correct (={:5.2f}%)'.format(nc, tot, torch.true_divide(nc*100,tot)))
     return model
 
+def train_hybrid_modified(data_master, epoch=1):
+    '''
+        Train a hybrid Anfis based on the Iris data.
+        I use a 'resilient' BP optimiser here, as SGD was a little flakey.
+    '''
+    train_data = get_iris_data_one_hot(data_master)
+    x, y_actual = train_data.dataset.tensors
+    model = make_anfis_modified(x, num_out=4)
+    # optimizer = torch.optim.SGD(model.parameters(), lr=1e-4, momentum=0.99)
+    optimizer = torch.optim.Rprop(model.parameters(), lr=1e-4)
+    criterion = torch.nn.MSELoss(reduction='sum')
+    experimental.train_anfis_with(model, train_data, optimizer, criterion, epoch)
+    # experimental.plot_all_mfs(model, x)
+    nc, tot = num_cat_correct(model, x, y_actual)
+    print('{} of {} correct (={:5.2f}%)'.format(nc, tot, torch.true_divide(nc*100,tot)))
+    return model
+
 def predict_data_test(model, x, y_actual):
     x = torch.Tensor(x)
     y_actual = make_one_hot(y_actual, num_categories=4)
@@ -126,6 +143,14 @@ def predict_data_test(model, x, y_actual):
     cat_act = torch.argmax(y_actual, dim=1)
     cat_pred = torch.argmax(y_pred, dim=1)
     return cat_act, cat_pred
+
+
+def predict_pengujian(model, x):
+    x = torch.Tensor(x)
+    y_pred = model(x)
+    # Change the y-value scores back into 'best category':
+    cat_pred = torch.argmax(y_pred, dim=1)
+    return cat_pred
 
 
 def train_non_hybrid(in_feat=2):

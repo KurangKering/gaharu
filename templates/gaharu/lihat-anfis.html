@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% load static %}
+{% block export-css %}
+<!-- DataTables -->
+<link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-responsive/css/responsive.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/cropperjs/dist/cropper.min.css" %}">
+{% endblock export-css %}
+{% block css %}
+<style type="text/css">
+img {
+  display: block;
+  max-width: 100%;
+}
+.preview {
+  overflow: hidden;
+  width: 160px; 
+  height: 160px;
+  margin: 10px;
+  border: 1px solid red;
+}
+.modal-lg{
+  max-width: 1000px !important;
+}
+</style>
+{% endblock css %}
+{% block content %}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark">Detail Model</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6 text-right">
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+
+            <div class="table-responsive">
+              <table class="table ">
+                <tbody>
+                  <tr>
+                  <th style="width:40%">Epoch</th>
+                  <td>: {{ epoch }}</td>
+                </tr>
+                <tr>
+                  <th>Jumlah Benar (Akurasi)</th>
+                  <td>: {{ jumlah_benar }} dari {{ total_data_test }} ({{ akurasi|floatformat:"0" }} %)</td>
+                </tr>
+                
+                
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            Data Latih
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+
+            <div class="table-responsive">
+              <table class="table table-striped" id="table-data-latih">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>FORM_FACTOR</th>
+                    <th>ASPECT_RATIO</th>
+                    <th>RECT</th>
+                    <th>NARROW_FACTOR</th>
+                    <th>PRD</th>
+                    <th>PLW</th>
+                    <th>IDM</th>
+                    <th>ENTROPY</th>
+                    <th>ASM</th>
+                    <th>CONTRAST</th>
+                    <th>CORRELATION</th>
+                    <th>KELAS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for train in table_train  %}
+                  <tr>
+                    <td>{{ train.id }}</td>
+                    <td>{{ train.form_factor }}</td>
+                    <td>{{ train.aspect_ratio }}</td>
+                    <td>{{ train.rect }}</td>
+                    <td>{{ train.narrow_factor }}</td>
+                    <td>{{ train.prd }}</td>
+                    <td>{{ train.plw }}</td>
+                    <td>{{ train.idm }}</td>
+                    <td>{{ train.entropy }}</td>
+                    <td>{{ train.asm }}</td>
+                    <td>{{ train.contrast }}</td>
+                    <td>{{ train.correlation }}</td>
+                    <td>{{ train.kelas|floatformat:"0" }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+          <!-- /.card-body -->
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            Data Uji
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+
+            <div class="table-responsive">
+              <table class="table table-striped" id="table-data-uji">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>FORM_FACTOR</th>
+                    <th>ASPECT_RATIO</th>
+                    <th>RECT</th>
+                    <th>NARROW_FACTOR</th>
+                    <th>PRD</th>
+                    <th>PLW</th>
+                    <th>IDM</th>
+                    <th>ENTROPY</th>
+                    <th>ASM</th>
+                    <th>CONTRAST</th>
+                    <th>CORRELATION</th>
+                    <th>KELAS PREDIKSI</th>
+                    <th>KELAS SEBENARNYA</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for test in table_test  %}
+                  <tr>
+                    <td>{{ test.id }}</td>
+                    <td>{{ test.form_factor }}</td>
+                    <td>{{ test.aspect_ratio }}</td>
+                    <td>{{ test.rect }}</td>
+                    <td>{{ test.narrow_factor }}</td>
+                    <td>{{ test.prd }}</td>
+                    <td>{{ test.plw }}</td>
+                    <td>{{ test.idm }}</td>
+                    <td>{{ test.entropy }}</td>
+                    <td>{{ test.asm }}</td>
+                    <td>{{ test.contrast }}</td>
+                    <td>{{ test.correlation }}</td>
+                    <td>{{ test.kelas_predicted|floatformat:"0" }}</td>
+                    <td>{{ test.kelas|floatformat:"0" }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+          <!-- /.card-body -->
+        </div>
+
+        <!-- /.card -->
+      </div>
+      <!-- /.col -->
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<!-- /.content -->
+{% endblock content %}
+
+
+{% block export-js %}
+<!-- DataTables -->
+<script src="{% static "plugins/datatables/jquery.dataTables.min.js" %}"></script>
+<script src="{% static "plugins/datatables-bs4/js/dataTables.bootstrap4.min.js" %}"></script>
+<script src="{% static "plugins/datatables-responsive/js/dataTables.responsive.min.js" %}"></script>
+<script src="{% static "plugins/datatables-responsive/js/responsive.bootstrap4.min.js" %}"></script>
+<script src="{% static "plugins/cropperjs/dist/cropper.min.js" %}"></script>
+{% endblock export-js %}
+
+{% block js %}
+
+<script>
+$("#table-data-latih").DataTable();
+$("#table-data-uji").DataTable();
+</script>
+{% endblock js %}

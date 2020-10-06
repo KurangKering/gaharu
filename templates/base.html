@@ -97,14 +97,7 @@
                 </p>
               </a>
             </li>
-            <li class="nav-item">
-              <a href="{% url 'gaharu/klasifikasi' %}" class="nav-link ">
-                <i class="nav-icon fas fa-tachometer-alt"></i>
-                <p>
-                  Klasifikasi
-                </p>
-              </a>
-            </li>
+            
             <li class="nav-item">
               <a href="{% url 'gaharu/pengujian' %}" class="nav-link ">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -172,10 +165,13 @@
   <script src="{% static "plugins/fullscreen-loading/js/jquery.loadingModal.min.js" %}"></script>
   <script src="{% static "plugins/axios/axios.min.js" %}"></script>
   <script src="{% static "plugins/fancybox/jquery.fancybox.min.js" %}"></script>
+  <script src="{% static "plugins/qs.js" %}"></script>
 
   <script>
   axios.defaults.xsrfCookieName = 'csrftoken';
   axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN';
+  var overlaySelector = document.querySelector("#overlay");
+  
   </script>
   {% block export-js %}
   
@@ -189,5 +185,5 @@
   </script>
   {% block js %}
   {% endblock js %}
-  </body>
-  </html>
+</body>
+</html>

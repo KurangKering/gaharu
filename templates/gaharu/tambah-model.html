@@ -44,9 +44,8 @@ img {
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
-        <div class="card">
-          <div class="card-header">
-          </div>
+        <div class="card" id="content-menu">
+
           <!-- /.card-header -->
           <div class="card-body">
 
@@ -60,143 +59,253 @@ img {
                   <option value="-1">Tidak</option>
                 </select>
               </div>
-
               <div class="form-group">
-                <label for="">Nama Model</label>
-                <input type="number" class="form-control" id="nama_model" name="nama_model">
+                <label for="">Pembagian Data Uji (%)</label>
+                <input type="text" class="form-control" id="persen_uji" required placeholder="ex: 20 artinya 80% data latih dan 20% data uji " name="persen_uji" value="20">
+              </div>
+              <div class="form-group">
+                <label for="">Epoch</label>
+                <input type="number" class="form-control" id="epoch" name="epoch" value="1">
               </div>
               
-              <div class="form-group">
-                <label for="">Pembagian Data Uji</label>
-                <input type="number" class="form-control" id="persen_uji" required placeholder="ex: 0.2 artinya 80% data latih dan 20% data uji " name="persen_uji">
-              </div>
+              
               <button class="btn btn-primary" type="submit" id="btn-latih">Mulai Latih</button>
             </form>
             
           </div>
           <!-- /.card-body -->
         </div>
-        <div class="place-contents-here">
-          
+        <div style="display:none" id="content-hasil-klasifikasi">
+          <div class="card">
+            <div class="card-header">
+              Hasil Pemrosesan
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table ">
+                  <tbody>
+                    <tr>
+                      <th style="width:40%">Epoch</th>
+                      <td>: <span id="epoch-show"></span></td>
+                    </tr>
+                    <tr>
+                      <th>Jumlah Benar (Akurasi)</th>
+                      <td>: <span id="jumlah_benar"></span> dari <span id="total_data_test"></span> (<span id="akurasi"></span> %)</td>
+                    </tr>
+
+
+                  </tbody></table>
+                </div>
+
+
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </div>
+
+          <div style="display:none" id="content-data-latih">
+            <div class="card">
+              <div class="card-header">
+                Data Latih
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+
+                <div class="table-responsive">
+                  <table class="table table-striped" id="table-data-latih">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>FORM_FACTOR</th>
+                        <th>ASPECT_RATIO</th>
+                        <th>RECT</th>
+                        <th>NARROW_FACTOR</th>
+                        <th>PRD</th>
+                        <th>PLW</th>
+                        <th>IDM</th>
+                        <th>ENTROPY</th>
+                        <th>ASM</th>
+                        <th>CONTRAST</th>
+                        <th>CORRELATION</th>
+                        <th>KELAS</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+
+                  </table>
+                </div>
+
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </div>
+
+          <div style="display:none" id="content-data-uji">
+            <div class="card">
+              <div class="card-header">
+                Data Uji
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+
+                <div class="table-responsive">
+                  <table class="table table-striped" id="table-data-uji">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>FORM_FACTOR</th>
+                        <th>ASPECT_RATIO</th>
+                        <th>RECT</th>
+                        <th>NARROW_FACTOR</th>
+                        <th>PRD</th>
+                        <th>PLW</th>
+                        <th>IDM</th>
+                        <th>ENTROPY</th>
+                        <th>ASM</th>
+                        <th>CONTRAST</th>
+                        <th>CORRELATION</th>
+                        <th>KELAS</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+
+                  </table>
+                </div>
+
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </div>
+
+          <!-- /.card -->
         </div>
-
-        <!-- /.card -->
+        <!-- /.col -->
       </div>
-      <!-- /.col -->
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+    </div><!-- /.container-fluid -->
+  </section>
 
-<!-- /.content -->
+  <!-- /.content -->
 
 
-<template id="content-data-latih">
-  <div class="card">
-    <div class="card-header">
-      Data Latih
-    </div>
-    <!-- /.card-header -->
-    <div class="card-body">
 
-      <table class="table table-striped" id="table-data-latih">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>GAMBAR</th>
-            <th>FORM_FACTOR</th>
-            <th>ASPECT_RATIO</th>
-            <th>RECT</th>
-            <th>NARROW_FACTOR</th>
-            <th>PRD</th>
-            <th>PLW</th>
-            <th>IDM</th>
-            <th>ENTROPY</th>
-            <th>ASM</th>
-            <th>CONTRAST</th>
-            <th>CORRELATION</th>
-            <th>KELAS</th>
-            <th>Action</th>
-          </tr>
-        </thead>
 
-      </table>
 
-    </div>
-    <!-- /.card-body -->
-  </div>
-</template>
-<template id="content-data-uji">
-  <div class="card">
-    <div class="card-header">
-      Data Latih
-    </div>
-    <!-- /.card-header -->
-    <div class="card-body">
+  {% endblock content %}
 
-      <table class="table table-striped" id="table-data-latih">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>GAMBAR</th>
-            <th>FORM_FACTOR</th>
-            <th>ASPECT_RATIO</th>
-            <th>RECT</th>
-            <th>NARROW_FACTOR</th>
-            <th>PRD</th>
-            <th>PLW</th>
-            <th>IDM</th>
-            <th>ENTROPY</th>
-            <th>ASM</th>
-            <th>CONTRAST</th>
-            <th>CORRELATION</th>
-            <th>KELAS</th>
-            <th>Action</th>
-          </tr>
-        </thead>
+  {% block export-js %}
+  <!-- DataTables -->
+  <script src="{% static "plugins/datatables/jquery.dataTables.min.js" %}"></script>
+  <script src="{% static "plugins/datatables-bs4/js/dataTables.bootstrap4.min.js" %}"></script>
+  <script src="{% static "plugins/datatables-responsive/js/dataTables.responsive.min.js" %}"></script>
+  <script src="{% static "plugins/datatables-responsive/js/responsive.bootstrap4.min.js" %}"></script>
+  {% endblock export-js %}
 
-      </table>
+  {% block js %}
 
-    </div>
-    <!-- /.card-body -->
-  </div>
-</template>
-<template id="content-hasil-klasifikasi">
-  <div class="card">
-    <div class="card-header">
-      Data Latih
-    </div>
-    <!-- /.card-header -->
-    <div class="card-body">
+  <script>
 
-      <table class="table table-striped" id="table-data-latih">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>GAMBAR</th>
-            <th>KELAS</th>
-          </tr>
-        </thead>
+  var tableDataLatih = $("#table-data-latih").DataTable({
+    "columns": [
+    { "data": "id" },
+    { "data": "form_factor" },
+    { "data": "aspect_ratio" },
+    { "data": "rect" },
+    { "data": "narrow_factor" },
+    { "data": "prd" },
+    { "data": "plw" },
+    { "data": "idm" },
+    { "data": "entropy" },
+    { "data": "asm" },
+    { "data": "contrast" },
+    { "data": "correlation" },
+    { "data": "kelas" },
+    ],
+    pageLength: 5,
 
-      </table>
+    order : [],
+  });
+  var tableDataUji = $("#table-data-uji").DataTable({
+    "columns": [
+    { "data": "id" },
+    { "data": "form_factor" },
+    { "data": "aspect_ratio" },
+    { "data": "rect" },
+    { "data": "narrow_factor" },
+    { "data": "prd" },
+    { "data": "plw" },
+    { "data": "idm" },
+    { "data": "entropy" },
+    { "data": "asm" },
+    { "data": "contrast" },
+    { "data": "correlation" },
+    { "data": "kelas" },
+    { "data": "kelas_predicted" },
+    ],
+    pageLength: 5,
 
-    </div>
-    <!-- /.card-body -->
-  </div>
-</template>
-{% endblock content %}
+    order : [],
+  });
 
-{% block export-js %}
-{% endblock export-js %}
+  $("#form-latih").submit(function(e) {
+    e.preventDefault();
+    var overlayContent = overlaySelector.content.cloneNode(true);
+    $("#content-menu").append(overlayContent);
+    hideContent();
+    var URL = "{% url 'gaharu/proses_pelatihan' %}";
+    var data = new FormData($(this)[0]);
+    axios.post(URL, data)
+    .then((res) => {
+      data = res.data;
+      console.log(data);
+      tableDataLatih.clear();
+      tableDataLatih.rows.add(data.table_train);
+      tableDataLatih.draw();
 
-{% block js %}
+      tableDataUji.clear();
+      tableDataUji.rows.add(data.table_test);
+      tableDataUji.draw();
 
-<script>
-$("#form-latih").submit(function(e) {
-  e.preventDefault();
-  var URL = "{% url 'gaharu/proses_pelatihan' %}";
-  var data = new FormData($(this)[0]);
-  axios.post(URL, data)
 
-});
-</script>
-{% endblock js %}
+      $("#epoch-show").text(data.epoch);
+      $("#jumlah_benar").text(data.jumlah_benar);
+      $("#total_data_test").text(data.total_data_test);
+      $("#akurasi").text(data.akurasi);
+
+      $("html, body").animate({scrollTop: $("#content-menu").offset().top});
+    })
+    .catch(() => {
+
+    })
+    .then(() => {
+      showContent();
+      $("#content-menu").find(".overlay").remove();
+
+    })
+  });
+
+  function hideContent() {
+    tableDataLatih.clear();
+    tableDataLatih.draw();
+
+    tableDataUji.clear();
+    tableDataUji.draw();
+    $("#epoch-show").text("");
+    $("#jumlah_benar").text("");
+    $("#total_data_test").text("");
+    $("#akurasi").text("");
+    $("#content-data-latih").hide();
+    $("#content-data-uji").hide();
+    $("#content-hasil-klasifikasi").hide();
+  }
+  function showContent() {
+   $("#content-data-latih").show();
+   $("#content-data-uji").show();
+   $("#content-hasil-klasifikasi").show();
+ }
+
+ </script>
+ {% endblock js %}

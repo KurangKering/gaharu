@@ -51,13 +51,13 @@ img {
           <!-- /.card-header -->
           <div class="card-body">
             <div class="table-responsive">
-              <table id="example1" class="table table-bordered table-striped">
+              <table id="table-model-anfis" class="table table-bordered table-striped">
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>Judul</th>
                     <th>Data Latih</th>
                     <th>Data Uji</th>
+                    <th>Epoch</th>
                     <th>Akurasi</th>
                     <th>Action</th>
                   </tr>
@@ -66,12 +66,13 @@ img {
                   {% for model in models %}
                   <tr>
                     <td>{{ model.id }}</td>
-                    <td>{{ model.title }}</td>
-                    <td>{{ model.datalatih_ids }}</td>
-                    <td>{{ model.datauji_ids }}</td>
+                    <td>{{ model.jumlah_data_latih }}</td>
+                    <td>{{ model.jumlah_data_uji }}</td>
+                    <td>{{ model.epoch }}</td>
                     <td>{{ model.accuracy }}</td>
                     <td>
-                      <button class="btn btn-danger" type="button">Hapus</button>
+                      <button class="btn btn-danger btn-hapus" type="button" onclick="hapusAnfis({{ model.id }})">Hapus</button>
+                      <button class="btn btn-info btn-detail" type="button" onclick="location.href='{% url 'gaharu/lihat_anfis' model.id %}'">Detail</button>
                     </td>
                   </tr>
                   {% endfor %}
@@ -87,76 +88,10 @@ img {
     </div>
   </div><!-- /.container-fluid -->
 </section>
-<div class="modal fade" id="modal-default">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Default Modal</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form  id="form-upload">
 
-        <div class="card" id="card">
-
-          <div class="modal-body">
-
-            <!-- /.card -->
-
-
-            <div class="card-body">
-
-
-
-
-
-              <input type="file" name="input-image" class="form-control">
-              <br>
-              <div class="img-container">
-                <img id="image">
-
-              </div>
-              <br>
-              <div class="form-group">
-                <label >Kelas</label>
-                <select name="input-kelas" id="input-kelas" class="form-control" required>
-
-                  <option value="">Pilih Kelas</option>
-                  <option value="1">Gaharu</option>
-
-                </select>
-              </div>
-              {% csrf_token %}
-
-
-
-
-
-            </div>
-          </div>
-          <div class="modal-footer justify-content-between">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary" id="btn-save">Save changes</button>
-          </div>
-
-
-        </div>
-      </form>
-
-    </div>
-    <!-- /.modal-content -->
-  </div>
-  <!-- /.modal-dialog -->
-</div>
 <!-- /.content -->
 
-<template id="overlay">
 
-  <div class="overlay">
-    <i class="fas fa-2x fa-sync-alt fa-spin"></i>
-  </div>
-</template>
 {% endblock content %}
 
 {% block export-js %}
@@ -171,5 +106,19 @@ img {
 {% block js %}
 <script>
 
+$("#table-model-anfis").DataTable();
+
+function hapusAnfis(model_id) {
+  var model_id = model_id
+  axios.post('{% url "gaharu/hapus_anfis" %}', Qs.stringify({ 
+    model_id: model_id
+  }))
+  .then((res) => {
+    data = res.data
+    if (data.success == 1) {
+      window.location.reload(false);
+    }
+  })
+}
 </script>
 {% endblock js %}

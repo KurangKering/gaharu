@@ -9,7 +9,8 @@ urlpatterns = [
     path('data_anfis/', views.data_anfis, name='gaharu/data_anfis'),
     path('tambah_model/', views.tambah_model, name='gaharu/tambah_model'),
     path('proses_pelatihan/', views.proses_pelatihan, name='gaharu/proses_pelatihan'),
-    path('proses_anfis/', views.proses_anfis, name='gaharu/proses_anfis'),
-    path('klasifikasi/', views.klasifikasi, name='gaharu/klasifikasi'),
+    path('hapus_anfis/', views.hapus_anfis, name='gaharu/hapus_anfis'),
+    path('lihat_anfis/<int:model_id>/', views.lihat_anfis, name='gaharu/lihat_anfis'),
     path('pengujian/', views.pengujian, name='gaharu/pengujian'),
+    path('proses_pengujian/', views.proses_pengujian, name='gaharu/proses_pengujian'),
 ]

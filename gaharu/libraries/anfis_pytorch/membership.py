@@ -202,15 +202,36 @@ def make_anfis(x, num_mfs=5, num_out=1, hybrid=True):
         I need the x-vals to calculate a range and spread for the MFs.
         Variables get named x0, x1, x2,... and y0, y1, y2 etc.
     '''
+
     num_invars = x.shape[1]
     minvals, _ = torch.min(x, dim=0)
     maxvals, _ = torch.max(x, dim=0)
     ranges = maxvals-minvals
     invars = []
+    
     for i in range(num_invars):
         sigma = ranges[i] / num_mfs
         mulist = torch.linspace(minvals[i], maxvals[i], num_mfs).tolist()
         invars.append(('x{}'.format(i), make_gauss_mfs(sigma, mulist)))
+    outvars = ['y{}'.format(i) for i in range(num_out)]
+    model = AnfisNet('Simple classifier', invars, outvars, hybrid=hybrid)
+    return model
+
+def make_anfis_modified(x, num_out=1, hybrid=True):
+    num_invars = x.shape[1]
+    minvals, _ = torch.min(x, dim=0)
+    maxvals, _ = torch.max(x, dim=0)
+
+    avals = (minvals + maxvals) / 2
+    bval = 1
+
+
+    invars = []
+
+
+    for i in range(num_invars):
+        invars.append(('x{}'.format(i), make_bell_mfs(avals[i], bval, [minvals[i], maxvals[i]] )))
+
     outvars = ['y{}'.format(i) for i in range(num_out)]
     model = AnfisNet('Simple classifier', invars, outvars, hybrid=hybrid)
     return model
