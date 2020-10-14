@@ -21,7 +21,11 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.index, name="dashboard"),
+    path('', views.index, name="index"),
+    path('admin/', admin.site.urls),
+    path('login', views.login, name="login"),
+    path('logout', views.logout, name="logout"),
+    path('process_login', views.process_login, name="process_login"),
     path('gaharu/', include('gaharu.urls'))
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

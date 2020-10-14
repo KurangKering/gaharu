@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="{% static "plugins/datatables-select/css/select.bootstrap4.css" %}">
 <link rel="stylesheet" href="{% static "plugins/datatables-buttons/css/buttons.bootstrap4.css" %}">
 <link rel="stylesheet" href="{% static "plugins/cropperjs/dist/cropper.min.css" %}">
-<link rel="stylesheet" href="{% static "plugins/cropperjs/dist/cropper.min.css" %}">
 {% endblock export-css %}
 {% block css %}
 <style type="text/css">
@@ -25,7 +24,6 @@ img {
 .modal-lg{
   max-width: 1000px !important;
 }
-
 </style>
 {% endblock css %}
 {% block content %}
@@ -42,215 +40,241 @@ img {
   </div><!-- /.container-fluid -->
 </div>
 <!-- /.content-header -->
-
 <!-- Main content -->
 <section class="content">
   <div class="container-fluid">
+    <div class="callout callout-info">
+      <h5><i class="fas fa-info"></i> Note:</h5>
+      Pilih salah satu model dibawah ini untuk digunakan pada pengujian.
+    </div>
     <div class="row">
       <div class="col-12">
-        <div class="card card-primary card-tabs">
-          <div class="card-header p-0 pt-1">
-            <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
-              <li class="nav-item">
-                <a class="nav-link " id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="false">Pilih Model</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active" id="custom-tabs-one-profile-tab" data-toggle="pill" href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="true">Input Gambar</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" id="custom-tabs-one-settings-tab" data-toggle="pill" href="#custom-tabs-one-settings" role="tab" aria-controls="custom-tabs-one-settings" aria-selected="false">Hasil</a>
-              </li>
-
-            </ul>
-          </div>
+        <div class="card">
           <div class="card-body">
-            <div class="tab-content" id="custom-tabs-one-tabContent">
-              <div class="tab-pane fade " id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
-                <div class="callout callout-info">
-                  <h5><i class="fas fa-info"></i> Note:</h5>
-                  Pilih salah satu model dibawah ini untuk digunakan pada pengujian.
-                </div>
-                <div class="table-responsive">
-                  <table id="table-model-anfis" class="table table-bordered table-striped">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Data Latih</th>
-                        <th>Data Uji</th>
-                        <th>Epoch</th>
-                        <th>Akurasi</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {% for model in models %}
-                      <tr>
-                        <td>{{ model.id }}</td>
-                        <td>{{ model.jumlah_data_latih }}</td>
-                        <td>{{ model.jumlah_data_uji }}</td>
-                        <td>{{ model.epoch }}</td>
-                        <td>{{ model.accuracy }}</td>
-
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div class="tab-pane fade active show " id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
-                <div class="container">
-
-                  <div class="row">
-                    <div class="col-lg-5">
-                      <div class="p-5 bg-white shadow rounded-lg"><img src="https://res.cloudinary.com/mhmd/image/upload/v1557366994/img_epm3iz.png" alt="" width="200" class="d-block mx-auto mb-4 rounded-pill" crossorigin>
-
-                        <!-- Default bootstrap file upload-->
-
-                        <h6 class="text-center mb-4 text-muted">
-                          Baca Dahulu aturan sebelum Proses Ekstraksi Citra
-                        </h6>
-
-                        <!-- Button trigger modal -->
-                        <div align="center">
-                          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter">
-                            Read Me !
-                          </button></div>
-
-                          <!-- Modal -->
-                          <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                              <div class="modal-content">
-                                <div class="modal-header">
-                                  <h5 class="modal-title" id="exampleModalLongTitle" align="center">-Disclaimer-</h5>
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                  </button>
-                                </div>
-                                <div class="modal-body">
-                                  <h6 class="text-center mb-4 text-muted">
-                                    Direkomendasikan File dengan Ukuran Max *5Mb<hr>
-                                    Pastikan <i>Background</i> Citra Daun Berwarna Putih<hr>
-                                    Proses Klasifikasi hanya dilakukan pada daun gaharu saja
-                                  </h6>
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-
-
-
-
-                          <br>
-                          <div class="custom-file overflow-hidden rounded-pill mb-5">
-                            <input type="file" name="input-image" class="custom-file-input rounded-pill"  accept="image/*">
-                            <label for="customFile" id="avatar"  class="custom-file-label rounded-pill">Choose file</label>
-                          </div>
-                          <!-- End -->
-                          <div class="progress">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-                          </div>
-                          <div class="alert" role="alert"></div>
-
-                        </div>
-
-                      </div>
-                      <div class="col-lg-7 ">
-
-                        <div class="card h-100">
-                          <div class="card-body">
-                            <div class="img-container">
-
-                              <img id="image" src="https://foresteract.com/wp-content/uploads/2017/08/Daun-dan-Bunga-Pohon-Gaharu.jpg.webp" />
-                            </div>
-                          </div>
-                        </div>
-
-
-                      </div>
-                    </div>
+            <div class="table-responsive">
+              <table id="table-model-anfis" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Data Latih</th>
+                    <th>Data Uji</th>
+                    <th>Epoch</th>
+                    <th>Akurasi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for model in models %}
+                  <tr>
+                    <td>{{ model.id }}</td>
+                    <td>{{ model.jumlah_data_latih }}</td>
+                    <td>{{ model.jumlah_data_uji }}</td>
+                    <td>{{ model.epoch }}</td>
+                    <td>{{ model.accuracy }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="callout callout-info">
+          <h5><i class="fas fa-info"></i> Note:</h5>
+          Pilih salah satu model dibawah ini untuk digunakan pada pengujian.
+        </div>
+        <div class="row">
+          <div class="col-lg-5">
+            <div class="card shadow">
+              <div class="card-body" id="content-hasil">
+                <img src="/media/img_epm3iz.png" alt="" width="100%" class="d-block mx-auto mb-4 rounded-pill" crossorigin>
+                <h6 class="text-center mb-4 text-muted">
+                  Baca Dahulu aturan sebelum Proses Ekstraksi Citra
+                </h6>
+                <div align="center">
+                  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter">
+                    Read Me !
+                  </button></div>
+                  <br>
+                  <div class="custom-file overflow-hidden rounded-pill mb-5">
+                    <input type="file" name="input-image" id="input-image" class="custom-file-input rounded-pill"  accept="image/*">
+                    <label for="customFile" id="avatar"  class="custom-file-label rounded-pill">Choose file</label>
                   </div>
                 </div>
-
-                <div class="tab-pane fade" id="custom-tabs-one-settings" role="tabpanel" aria-labelledby="custom-tabs-one-settings-tab">
-                 <div class="card" id="content-hasil">
-                   <div class="card-body">
-                     <button type="button" class="btn btn-primary" id="btn-mulai-pengujian">Mulai Pengujian</button>
-
-                     <div id="place-result-here"></div>
-                   </div>
-                 </div>
-               </div>
-             </div>
-           </div>
-           <!-- /.card -->
-         </div>
-
-
-
-
-
-
-         <!-- /.card -->
-       </div>
-       <!-- /.col -->
-     </div>
-   </div><!-- /.container-fluid -->
- </section>
-
- <!-- /.content -->
-
-
- {% csrf_token %}
-
-
-
- {% endblock content %}
-
- {% block export-js %}
- <!-- DataTables -->
- <script src="{% static "plugins/datatables/jquery.dataTables.min.js" %}"></script>
- <script src="{% static "plugins/datatables-bs4/js/dataTables.bootstrap4.min.js" %}"></script>
- <script src="{% static "plugins/datatables-responsive/js/dataTables.responsive.min.js" %}"></script>
- <script src="{% static "plugins/datatables-responsive/js/responsive.bootstrap4.min.js" %}"></script>
- <script src="{% static "plugins/datatables-select/js/dataTables.select.min.js" %}"></script>
- <script src="{% static "plugins/datatables-buttons/js/dataTables.buttons.min.js" %}"></script>
- <script src="{% static "plugins/cropperjs/dist/cropper.min.js" %}"></script>
-
- {% endblock export-js %}
-
- {% block js %}
- <script>
- var events = $('#events');
- var model_id = null;
- var tableModelAnfis = $("#table-model-anfis").DataTable({
+              </div>
+            </div>
+            <div class="col-lg-7 ">
+              <div class="card">
+                <div class="card-body">
+                  <div class="img-container">
+                    <img id="image" style="width: 100%; height:600px" src="/media/empty-images.png" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <button type="button" class="btn btn-primary btn-block" id="btn-mulai-pengujian">Mulai Pengujian</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="callout callout-info">
+            <h5>Hasil Pengujian:</h5>
+            <div id="place-result-here">
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-3">
+                  <table class="table">
+                   <tr>
+                    <th width="10%">prd</th>
+                    <td><span id="prd">:</span></td>
+                  </tr>
+                  <tr>
+                    <th width="10%">plw</th>
+                    <td><span id="plw">:</span></td>
+                  </tr>
+                  <tr>
+                    <th width="10%">rect</th>
+                    <td><span id="rect">:</span></td>
+                  </tr>
+                </table>
+              </div>
+              <div class="col-3">
+                <table class="table">
+                  <tr>
+                    <th width="10%">narrow_factor</th>
+                    <td><span id="nf">:</span></td>
+                  </tr>
+                  <tr>
+                    <th width="10%">aspect_ratio</th>
+                    <td><span id="ar">:</span></td>
+                  </tr>
+                  <tr>
+                    <th width="10%">form_factor</th>
+                    <td><span id="ff">:</span></td>
+                  </tr>
+                </table>
+              </div>
+              <div class="col-3">
+                <table class="table">
+                  <tr>
+                    <th width="10%">idm</th>
+                    <td><span id="idm">:</span></td>
+                  </tr>
+                  <tr>
+                    <th width="10%">entropy</th>
+                    <td><span id="entropy">:</span></td>
+                  </tr>
+                  <tr>
+                    <th width="10%">asm</th>
+                    <td><span id="asm">:</span></td>
+                  </tr>
+                </table>
+              </div>
+              <div class="col-3">
+                <table class="table">
+                  <tr>
+                    <th width="10%">contrast</th>
+                    <td><span id="contrast">:</span></td>
+                  </tr>
+                  <tr>
+                    <th width="10%">korelasi</th>
+                    <td><span id="corr">:</span></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-4">
+            <div class="card">
+              <div class="card-body">
+                <img  class="center-image-card" id="image-clean" src="/media/empty-images.png" alt="">
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card">
+              <div class="card-body">
+                <img  class="center-image-card" id="image-gray" src="/media/empty-images.png" alt="">
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card">
+              <div class="card-body">
+                <img  class="center-image-card" id="image-binary" src="/media/empty-images.png" alt="">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.col -->
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle" align="center">-Disclaimer-</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h6 class="text-center mb-4 text-muted">
+          Direkomendasikan File dengan Ukuran Max *5Mb<hr>
+          Pastikan <i>Background</i> Citra Daun Berwarna Putih<hr>
+          Proses Klasifikasi hanya dilakukan pada daun gaharu saja
+        </h6>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% csrf_token %}
+{% endblock content %}
+{% block export-js %}
+<!-- DataTables -->
+<script src="{% static "plugins/datatables/jquery.dataTables.min.js" %}"></script>
+<script src="{% static "plugins/datatables-bs4/js/dataTables.bootstrap4.min.js" %}"></script>
+<script src="{% static "plugins/datatables-responsive/js/dataTables.responsive.min.js" %}"></script>
+<script src="{% static "plugins/datatables-responsive/js/responsive.bootstrap4.min.js" %}"></script>
+<script src="{% static "plugins/datatables-select/js/dataTables.select.min.js" %}"></script>
+<script src="{% static "plugins/datatables-buttons/js/dataTables.buttons.min.js" %}"></script>
+<script src="{% static "plugins/cropperjs/dist/cropper.min.js" %}"></script>
+{% endblock export-js %}
+{% block js %}
+<script>
+var events = $('#events');
+var model_id = null;
+var tableModelAnfis = $("#table-model-anfis").DataTable({
   select: 'single',
 });
-
- tableModelAnfis.on( 'select', function ( e, dt, type, indexes ) {
+tableModelAnfis.on( 'select', function ( e, dt, type, indexes ) {
   if ( type === 'row' ) {
     model_id = tableModelAnfis.rows( indexes ).data()[0][0];
   }
 } );
-
- tableModelAnfis.on( 'deselect', function ( e, dt, type, indexes ) {
+tableModelAnfis.on( 'deselect', function ( e, dt, type, indexes ) {
   model_id = null;
 } );
-
-
- var $inputImg = $("input[name='input-image']");
- var image = $("#image");
- var filename;
- var cropper;
- const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
- $inputImg.change(function(e) {
-  if (cropper) {
-    cropper.destroy();
-    cropper = null;
-  }
+var $inputImg = $("input[name='input-image']");
+var image = $("#image");
+var filename;
+var cropper;
+const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+$inputImg.change(function(e) {
   var files = e.target.files;
   var done = function (url) {
     image.attr('src',url);
@@ -258,8 +282,11 @@ img {
   var reader;
   var file;
   var url;
-
   if (files && files.length > 0) {
+    if (cropper) {
+      cropper.destroy();
+      cropper = null;
+    }
     file = files[0];
     console.log(file)
     if (URL) {
@@ -272,22 +299,26 @@ img {
       reader.readAsDataURL(file);
     }
     cropper = new Cropper(image[0], {
-      viewMode: 3,
+      strict: true,
+      viewMode: 2,
+      cropBoxResizable: false,
+      aspectRatio: 2/3,
+      autoCropArea: 0.7,
+      cropBoxMovable: true,
+      dragMode: 'none',
       center: true,
-      restore: false,
-      zoomOnWheel: false
-      // preview: '.preview'
+      zoomOnWheel: false,
     });
   }
 });
-
- var btnMulaiPengujian = $("#btn-mulai-pengujian");
-
- btnMulaiPengujian.click(function(event) {
+var btnMulaiPengujian = $("#btn-mulai-pengujian");
+btnMulaiPengujian.click(function(event) {
+  if (!validateData()) {
+    return alert("no no no");
+  }
   var overlayContent = overlaySelector.content.cloneNode(true);
   $("#content-hasil").append(overlayContent);
   model_id = model_id;
-
   if (cropper) {
     canvas = cropper.getCroppedCanvas({
       width: 200,
@@ -298,7 +329,6 @@ img {
       reader.readAsDataURL(blob);
       reader.onloadend = function() {
         var base64data = reader.result;
-
         $.ajax({
           headers: {'X-CSRFToken': csrftoken},
           type: "POST",
@@ -311,20 +341,35 @@ img {
         .done(function(result) {
           if (result.success == 1) {
             $("#place-result-here").html(result.predicted);
+
+            $("#image-clean").attr("src", "data:image/png;base64,"+(result.image_clean));
+            $("#image-gray").attr("src", "data:image/png;base64,"+(result.image_gray));
+            $("#image-binary").attr("src", "data:image/png;base64,"+(result.image_binary));
+            $("#prd").text(result.variables.prd);
+            $("#plw").text(result.variables.plw);
+            $("#rect").text(result.variables.rect);
+            $("#nf").text(result.variables.nf);
+            $("#ar").text(result.variables.ar);
+            $("#ff").text(result.variables.ff);
+            $("#idm").text(result.variables.idm);
+            $("#entropy").text(result.variables.entropy);
+            $("#asm").text(result.variables.asm);
+            $("#contrast").text(result.variables.contrast);
+            $("#corr").text(result.variables.corr);
           }
         })
         .always(function() {
           $("#content-hasil").find(".overlay").remove();
-
         })
-
-
-
       }
     });
   }
-
 });
-
- </script>
- {% endblock js %}
+function validateData() {
+  if (model_id == "" || model_id == null) {
+    return false;
+  }
+  return true;
+}
+</script>
+{% endblock js %}
