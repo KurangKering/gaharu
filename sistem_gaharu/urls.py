@@ -22,10 +22,13 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name="index"),
+    path('index_lama', views.index_lama, name="index_lama"),
     path('admin/', admin.site.urls),
     path('login', views.login, name="login"),
     path('logout', views.logout, name="logout"),
     path('process_login', views.process_login, name="process_login"),
+    path('pengujian', views.pengujian, name="pengujian"),
+    path('process_pengujian', views.process_pengujian, name="process_pengujian"),
     path('gaharu/', include('gaharu.urls'))
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

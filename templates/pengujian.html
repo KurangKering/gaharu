@@ -1,0 +1,263 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Klasifikasi Gaharu</title>
+  <link rel="stylesheet" href="{% static 'frontend/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'frontend/css/cropper.css' %}">
+  <link href="{% static 'frontend/vendor1/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'frontend/vendor1/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <link href="{% static 'frontend/css/grayscale.min.css' %}" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'frontend/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'frontend/css/cropper.css' %}">
+
+  <style>
+
+  .label {
+    cursor: pointer;
+  }
+  .progress {
+    display: none;
+    margin-bottom: 1rem;
+  }
+  .alert {
+    display: none;
+  }
+  .img-container img {
+    max-width: 100%;
+  }
+  </style>
+
+</style>
+</head>
+
+<body background="{% static 'frontend/img/bg-upload.jpg' %}">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand js-scroll-trigger" href="{% url 'index' %}">Home</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'pengujian' %}">Klasifikasi</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% static 'frontend//login' %}">Login</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <section>
+    <div class="container p-5">
+      <div class="row mb-5 text-center text-white">
+        <div class="col-lg-10 mx-auto">
+          <h1 class="display-4">UPLOAD FILE</h1>
+          <p class="lead">Silahkan Upload Citra Daun Gaharu</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-5 mx-auto">
+          <div class="p-5 bg-white shadow rounded-lg">
+            <img src="https://res.cloudinary.com/mhmd/image/upload/v1557366994/img_epm3iz.png" alt="" width="200" class="d-block mx-auto mb-4 rounded-pill">
+            <h6 class="text-center mb-4 text-muted">
+              Baca Dahulu aturan sebelum Proses Ekstraksi Citra
+            </h6>
+            <div align="center">
+              <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter">
+                Read Me !
+              </button>
+            </div>
+            <br>
+            <div class="custom-file overflow-hidden rounded-pill mb-5">
+              <input id="input" type="file" class="custom-file-input rounded-pill" name="image" accept="image/*">
+              <label for="customFile" id="avatar" class="custom-file-label rounded-pill">Choose file</label>
+            </div>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container p-5">
+      <div class="card">
+        <div class="card-header"></div>
+        <div class="card-body">
+
+          <div class="row">
+            <div class="col-md-6 mx-auto ">
+              <div class="img-container">
+                <img id="image" style="width: 100%; height:600px" src="/media/empty-images.png" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle" align="center">-Disclaimer-</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h6 class="text-center mb-4 text-muted">
+            Direkomendasikan File dengan Ukuran Max *5Mb<hr>
+            Pastikan <i>Background</i> Citra Daun Berwarna Putih<hr>
+            Proses Klasifikasi hanya dilakukan pada daun gaharu saja
+          </h6>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabel">Crop the image</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="img-container">
+            <img id="image" src="https://avatars0.githubusercontent.com/u/3456749">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="crop">Execute</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.bundle.min.js"></script>
+  <script src="{% static 'frontend/js/cropper.js' %}"></script>
+  <script>
+  window.addEventListener('DOMContentLoaded', function() {
+
+    var avatar = document.getElementById('avatar');
+
+  });
+</script>
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+  var avatar = document.getElementById('avatar');
+  var image = document.getElementById('image');
+  var input = document.getElementById('input');
+  var $progress = $('.progress');
+  var $progressBar = $('.progress-bar');
+  var $alert = $('.alert');
+  var $modal = $('#modal');
+  var cropper;
+  var filename;
+  $('[data-toggle="tooltip"]').tooltip();
+  input.addEventListener('change', function (e) {
+    filename = e.target.files[0].name;
+    console.log(filename);
+    var files = e.target.files;
+    var done = function (url) {
+      input.value = '';
+      image.src = url;
+      $alert.hide();
+      $modal.modal('show');
+    };
+    var reader;
+    var file;
+    var url;
+    if (files && files.length > 0) {
+      file = files[0];
+      if (URL) {
+        done(URL.createObjectURL(file));
+      } else if (FileReader) {
+        reader = new FileReader();
+        reader.onload = function (e) {
+          done(reader.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  });
+  $modal.on('shown.bs.modal', function () {
+    cropper = new Cropper(image, {
+      aspectRatio: 2/3,
+      viewMode: 3,
+    });
+  }).on('hidden.bs.modal', function () {
+    cropper.destroy();
+    cropper = null;
+  });
+  document.getElementById('crop').addEventListener('click', function () {
+    console.log(filename);
+    var initialAvatarURL;
+    var canvas;
+    $modal.modal('hide');
+    if (cropper) {
+      canvas = cropper.getCroppedCanvas({
+        width: 100,
+        height: 150,
+      });
+      initialAvatarURL = avatar.src;
+      avatar.src = canvas.toDataURL();
+      $progress.show();
+      $alert.removeClass('alert-success alert-warning');
+      canvas.toBlob(function (blob) {
+        var formData = new FormData();
+        formData.append('file', blob, filename,);
+        $.ajax('{% url "process_pengujian" %}', {
+          method: 'POST',
+          data: formData, 
+          processData: false,
+          contentType: false,
+          xhr: function () {
+            var xhr = new XMLHttpRequest();
+            xhr.upload.onprogress = function (e) {
+              var percent = '0';
+              var percentage = '0%';
+              if (e.lengthComputable) {
+                percent = Math.round((e.loaded / e.total) * 100);
+                percentage = percent + '%';
+                $progressBar.width(percentage).attr('aria-valuenow', percent).text(percentage);
+              }
+            };
+            return xhr;
+          },
+          success: function (data) {
+            alert(data.kelas);
+            $alert.show().addClass('alert-success').text('Klasifikasi success');
+          },
+          error: function () {
+            avatar.src = initialAvatarURL;
+            $alert.show().addClass('alert-warning').text('Klasifikasi Gagal');
+          },
+          complete: function () {
+            $progress.hide();
+          },
+        });
+      });
+    }
+  });
+});
+</script>
+</body>
+</html>
