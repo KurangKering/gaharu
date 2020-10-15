@@ -107,6 +107,20 @@ def proses_tambah_data_master(request):
     }
     return JsonResponse(context, safe=False)
 
+def hapus_data(request):
+    data_id = request.POST.get('data_id')
+    print(data_id)
+    data = Dataset.pdobjects.get(id=data_id)
+    data.filename.delete()
+    data.delete()
+
+    success = 1
+    context = {
+        'success': success
+    }
+    return JsonResponse(context, safe=False)
+
+
 def proses_input(request):
     if not request.user.is_authenticated:
         return redirect("index")
