@@ -65,7 +65,7 @@ img {
                 <tbody>
                   {% for model in models %}
                   <tr>
-                    <td>{{ model.id }}</td>
+                    <td>{{ forloop.counter }}</td>
                     <td>{{ model.jumlah_data_latih }}</td>
                     <td>{{ model.jumlah_data_uji }}</td>
                     <td>{{ model.epoch }}</td>
