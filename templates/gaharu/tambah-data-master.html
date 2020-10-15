@@ -70,9 +70,13 @@ img {
                 Read Me !
               </button></div>
               <br>
-              <div class="custom-file overflow-hidden rounded-pill mb-5">
+              <div class="custom-file overflow-hidden rounded-pill">
                 <input type="file" name="input-image" id="input-image" class="custom-file-input rounded-pill"  accept="image/*">
                 <label for="customFile" id="avatar"  class="custom-file-label rounded-pill">Choose file</label>
+              </div >
+              <div class="text-center">
+                <p class="" id="namafile"></p>
+                
               </div>
               <div class="row">
                 <div class="col-2">
@@ -104,6 +108,7 @@ img {
                 </div>
               </div>
 
+              
 
 
             </div>
@@ -210,7 +215,8 @@ img {
 
       file = files[0];
       console.log(file)
-      filename = file.name
+      filename = file.name;
+      $("#namafile").text(file.name);
       if (URL) {
         done(URL.createObjectURL(file));
       } else if (FileReader) {
@@ -272,7 +278,7 @@ img {
               cropper.destroy();
               cropper = null;
 
-              $("#image").attr('src', "/media/empty-images.png");
+              $("#image").attr('src', "/static/images/empty-images.png");
               filename = null;
 
             },

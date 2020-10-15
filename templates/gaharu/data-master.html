@@ -74,7 +74,7 @@ img {
                 <tbody>
                   {% for dataset in datasets %}
                   <tr>
-                    <td>{{ dataset.id }}</td>
+                    <td>{{ forloop.counter }}</td>
                     <td><a data-fancybox href="{{   dataset.filename.url  }}"><img src="{{   dataset.filename.url  }}" alt=""></a></td>
                     <td>{{ dataset.form_factor }}</td>
                     <td>{{ dataset.aspect_ratio }}</td>
@@ -89,7 +89,7 @@ img {
                     <td>{{ dataset.correlation }}</td>
                     <td>{{ dataset.kelas }}</td>
                     <td>
-                      <button class="btn btn-danger" type="button">Hapus</button>
+                      <button class="btn btn-danger" type="button" onclick="deleteData({{ dataset.id }})">Hapus</button>
                     </td>
                   </tr>
                   {% endfor %}
@@ -284,6 +284,26 @@ $("#form-upload").submit(function(event) {
   });
 });
 
+function deleteData(id) {
+ $.ajax({
+  headers: {'X-CSRFToken': csrftoken},
+  type: "POST",
+  dataType: "json",
+  url: "{% url 'gaharu/hapus_data' %}",
+  data: {data_id: id},
+  beforeSend: function(){
+ }
+})
+ .done(function(result) {
+  if (result.success == 1) {
+
+    window.location.reload(false);
+  }
+})
+ .always(function() {
+
+})
+}
 
 
 </script>

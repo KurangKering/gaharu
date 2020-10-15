@@ -7,6 +7,7 @@ urlpatterns = [
     path('data_master/', views.data_master, name='gaharu/data_master'),
     path('tambah_data_master/', views.tambah_data_master, name='gaharu/tambah_data_master'),
     path('proses_tambah_data_master/', views.proses_tambah_data_master, name='gaharu/proses_tambah_data_master'),
+    path('hapus_data/', views.hapus_data, name='gaharu/hapus_data'),
     path('proses_input/', views.proses_input, name='gaharu/proses_input'),
     path('data_anfis/', views.data_anfis, name='gaharu/data_anfis'),
     path('tambah_model/', views.tambah_model, name='gaharu/tambah_model'),
