@@ -75,7 +75,7 @@ img {
                   {% for dataset in datasets %}
                   <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td><a data-fancybox href="{{   dataset.filename.url  }}"><img src="{{   dataset.filename.url  }}" alt=""></a></td>
+                    <td><img  class="image-data" data-model-id="{{ dataset.id }}" src="{{   dataset.filename.url  }}" alt=""></td>
                     <td>{{ dataset.form_factor }}</td>
                     <td>{{ dataset.aspect_ratio }}</td>
                     <td>{{ dataset.rect }}</td>
@@ -169,7 +169,59 @@ img {
 </div>
 <!-- /.content -->
 
+<div id="modal-large"  data-iziModal-fullscreen="true" style="display:none">
 
+  <div id="content-hasil" class="mt-2">
+
+    <div class="row">
+      <div class="col-4">
+        <div class="card">
+          <div class="card-body">
+            <div class="text-center" style="font-weight:bold">
+              <p>RGB Image</p>
+            </div>
+            <img  class="center-image-card" id="image-clean" src="{% static 'images/empty-images.png' %}" alt="">
+            <div class="text-center mt-2">
+              <div class="btn-group-horizontal">
+                <button type="button" class="btn btn-info btn-download" data-type="R">R CSV</button>
+                <button type="button" class="btn btn-info btn-download" data-type="G">G CSV</button>
+                <button type="button" class="btn btn-info btn-download" data-type="B">B CSV</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card">
+          <div class="card-body">
+            <div class="text-center" style="font-weight:bold">
+              <p>Gray Image</p>
+            </div>
+            <img  class="center-image-card" id="image-gray" src="{% static 'images/empty-images.png' %}" alt="">
+            <div class="text-center mt-2">
+              <button class="btn btn-info btn-download" type="button" data-type="gray" id="btn-download-gray">Gray CSV</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card">
+          <div class="card-body">
+            <div class="text-center" style="font-weight:bold">
+              <p>Binary Image</p>
+            </div>
+            <img  class="center-image-card" id="image-binary" src="{% static 'images/empty-images.png' %}" alt="">
+            <div class="text-center mt-2">
+              <button class="btn btn-info btn-download" type="button" data-type="binary" id="btn-download-binary" >Binary CSV</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>
 {% endblock content %}
 
 {% block export-js %}
@@ -194,8 +246,46 @@ const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
 var overlayEl = document.querySelector("#overlay");
 var overlayTemplate = overlayEl.content.cloneNode(true);
+var detail_id
 
 
+$("#modal-large").iziModal({
+  history: false,
+  title: "Keterangan",
+    // subtitle: "Simple, complete and lightweight modal plugin with jquery.",
+    icon: 'icon-chat',
+    // overlayColor: 'rgba(255, 255, 255, 0.4)',
+    // headerColor: '#334c7b',
+    iconColor: 'white',
+    // fullscreen: true,
+    width: 700,
+    padding: 20,
+    // rtl: true,
+    bodyOverflow: true,
+    openFullscreen: true,
+    // closeButton: false,
+    // top: 50,
+    // bottom: 50,
+    onClosed: function(modal){
+      history.replaceState(null, "", window.location.pathname)
+        // console.info(modal)
+        //modal.destroy();
+      },
+      onOpening: function(modal){
+        // if (model_id == null) {
+        //     history.replaceState(null, "", window.location.pathname)
+        //     modal.close();
+        // }
+        modal.startLoading();
+      },
+      onOpened: function(modal){
+        modal.stopLoading();
+        setTimeout(function(){
+          $("#modal-large .iziModal-wrap").scrollTop(0);            
+        },1)
+      }
+    });
+$("#modal-large").iziModal('setZindex', 99999);
 
 
 $("table").DataTable();
@@ -292,7 +382,7 @@ function deleteData(id) {
   url: "{% url 'gaharu/hapus_data' %}",
   data: {data_id: id},
   beforeSend: function(){
- }
+  }
 })
  .done(function(result) {
   if (result.success == 1) {
@@ -302,9 +392,60 @@ function deleteData(id) {
 })
  .always(function() {
 
-})
+ })
 }
 
 
 </script>
+
+<script>
+$(".image-data").click(function(e) {
+  var id = $(this).data('modelId');
+  detail_id = id;
+  $.ajax({
+    headers: {'X-CSRFToken': csrftoken},
+    type: "POST",
+    dataType: "json",
+    url: "{% url 'gaharu/detail_gambar' %}",
+    data: {id:id},
+    beforeSend: function(){
+
+    }
+  })
+  .done(function(result) {
+    if (result.success == 1) {
+
+      $("#image-clean").attr("src", "data:image/png;base64,"+(result.image_clean));
+      $("#image-gray").attr("src", "data:image/png;base64,"+(result.image_gray));
+      $("#image-binary").attr("src", "data:image/png;base64,"+(result.image_binary));
+
+
+      $("#modal-large").iziModal("open");
+
+    }
+  })
+
+  .always(function() {
+
+  });
+
+
+});
+
+$(".btn-download").click(function() {
+  var type = $(this).data('type');
+  var id = detail_id;
+
+  var data = {
+    type: type,
+    id: id,
+  };
+
+  var url = '{% url "gaharu/download_csv" %}';
+  strUrl = url.substring(0, url.length-1) + "?"+$.param(data);
+
+  $("body").append('<iframe id="firam" src="'+strUrl+'" style="display: none;" ></iframe>');
+});
+</script>
+
 {% endblock js %}

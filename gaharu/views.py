@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from .models import Dataset, Model
 from django.core.files.base import ContentFile
 import base64
@@ -23,7 +23,8 @@ import pickle
 import os
 from os.path import join
 from django.conf import settings
-
+import csv
+import tempfile
 
 def index(request):
     if not request.user.is_authenticated:
@@ -119,6 +120,94 @@ def hapus_data(request):
         'success': success
     }
     return JsonResponse(context, safe=False)
+
+
+def detail_gambar(request):
+    id = int(request.POST.get('id'));
+    dataset = Dataset.pdobjects.get(id=id)
+    filepath = dataset.filename.path
+    image = cv2.imread(filepath)
+    R = image[:, :, 2]
+    G = image[:, :, 1]
+    B = image[:, :, 0]
+
+    morfologi = Morfologi(image)
+
+    image_gray = morfologi.gray
+    image_binary = morfologi.cleaned.astype(int)*255
+
+    image_clean = base64.b64encode(cv2.imencode('.jpg', image)[1]).decode()
+    image_gray = base64.b64encode(cv2.imencode('.jpg', image_gray)[1]).decode()
+    image_binary = base64.b64encode(cv2.imencode('.jpg', image_binary)[1]).decode()
+
+    success = 1
+    context = {
+        'success': success,
+        'image_clean': image_clean,
+        'image_gray': image_gray,
+        'image_binary': image_binary
+    }
+
+    return JsonResponse(context, safe=False)
+
+def download_csv(request):
+    print(request.GET.urlencode())
+    tipe = request.GET.get("type")
+    data_id = int(request.GET.get("id"))
+
+    dataset = Dataset.pdobjects.get(id=data_id)
+    filepath = dataset.filename.path
+    image = cv2.imread(filepath)
+
+    R = image[:, :, 2]
+    G = image[:, :, 1]
+    B = image[:, :, 0]
+
+    morfologi = Morfologi(image)
+
+    image_gray = morfologi.gray
+    image_binary = morfologi.cleaned.astype(int)*255
+
+
+
+    image_to_download = ""
+
+    if (tipe == "R"):
+        image_to_download = R
+    elif (tipe == "G"):
+        image_to_download = G
+    elif (tipe == "B"):
+        image_to_download = B
+    elif (tipe == "gray"):
+        image_to_download = image_gray
+    elif (tipe == "binary"):
+        image_to_download = image_binary
+    else:
+        raise Http404
+
+
+    namafile = "{}_{}.csv".format(tipe, str(data_id))
+    handle, fn = tempfile.mkstemp(suffix='.csv')
+    with os.fdopen(handle,"w", encoding='utf8',errors='surrogateescape',\
+                  newline='') as f:
+        writer=csv.writer(f)
+        for row in image_to_download:
+            try:
+                writer.writerow(row)
+            except Exception as e:
+                print ('Error in writing row:',e)
+        f.close()
+
+    response = None
+
+    with open(fn, 'rb') as fh:
+        response = HttpResponse(
+            fh.read(), content_type="text/csv")
+        response['Content-Disposition'] = 'inline; filename=' + namafile
+    os.remove(fn)
+    return response
+
+    raise Http404
 
 
 def proses_input(request):
