@@ -117,7 +117,7 @@ img {
           <div class="card">
             <div class="card-body">
               <div class="img-container">
-                <img id="image"  src="/media/empty-images.png" />
+                <img id="image"  src="{% static 'images/empty-images.png' %}" />
               </div>
             </div>
           </div>
@@ -129,21 +129,21 @@ img {
           <div class="col-4">
             <div class="card">
               <div class="card-body">
-                <img  class="center-image-card" id="image-clean" src="/media/Crassna (1).jpg" alt="">
+                <img  class="center-image-card" id="image-clean" src="{% static 'images/Crassna (1).jpg' %}" alt="">
               </div>
             </div>
           </div>
           <div class="col-4">
             <div class="card">
               <div class="card-body">
-                <img  class="center-image-card" id="image-gray" src="/media/Crassna (1)-gray.jpg" alt="">
+                <img  class="center-image-card" id="image-gray" src="{% static 'images/Crassna (1)-gray.jpg' %}" alt="">
               </div>
             </div>
           </div>
           <div class="col-4">
             <div class="card">
               <div class="card-body">
-                <img  class="center-image-card" id="image-binary" src="/media/Crassna (1)-cleaned.jpg" alt="">
+                <img  class="center-image-card" id="image-binary" src="{% static 'images/Crassna (1)-cleaned.jpg' %}" alt="">
               </div>
             </div>
           </div>
@@ -297,6 +297,15 @@ img {
       });
     }
   });
+
+  $('.card-body').keypress(function (e) {
+   var key = e.which;
+   if(key == 13)  
+   {
+    btnSubmit.click();
+    return false;  
+  }
+});  
 
   function validateData() {
     var kelas = $("input[name='input-kelas']:checked").val();
