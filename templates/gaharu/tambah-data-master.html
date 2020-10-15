@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+{% load static %}
+{% block export-css %}
+<!-- DataTables -->
+<link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-responsive/css/responsive.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/cropperjs/dist/cropper.min.css" %}">
+{% endblock export-css %}
+{% block css %}
+<style type="text/css">
+img {
+  display: block;
+  max-width: 100%;
+}
+.preview {
+  overflow: hidden;
+  width: 160px; 
+  height: 160px;
+  margin: 10px;
+  border: 1px solid red;
+}
+.modal-lg{
+  max-width: 1000px !important;
+}
+.img-container {
+  /* Never limit the container height here */
+  max-width: 100%;
+}
+
+.img-container img {
+  /* This is important */
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  height: 600px;
+}
+
+
+
+.center-image-card:hover {
+  border: 1px solid;
+}
+</style>
+{% endblock css %}
+{% block content %}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark">Tambah Data Master</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6 text-right"></div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row " >
+      <div class="col-lg-5">
+        <div class="card shadow">
+          <div class="card-body" id="content-hasil">
+            <img src="https://res.cloudinary.com/mhmd/image/upload/v1557366994/img_epm3iz.png" alt="" width="200" class="d-block mx-auto mb-4 rounded-pill" crossorigin>
+            <h6 class="text-center mb-4 text-muted">
+              Baca Dahulu aturan sebelum Proses Ekstraksi Citra
+            </h6>
+            <div align="center">
+              <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter">
+                Read Me !
+              </button></div>
+              <br>
+              <div class="custom-file overflow-hidden rounded-pill mb-5">
+                <input type="file" name="input-image" id="input-image" class="custom-file-input rounded-pill"  accept="image/*">
+                <label for="customFile" id="avatar"  class="custom-file-label rounded-pill">Choose file</label>
+              </div>
+              <div class="row">
+                <div class="col-2">
+                  <label for="" class="" style="font-weight:normal">Kelas</label>
+                </div>
+                <div class="col-5">
+                  <div class="form-group">
+                    <div class="custom-control custom-radio" style="margin-bottom: 10px">
+                      <input class="custom-control-input" type="radio" id="customRadio1" name="input-kelas" value="0">
+                      <label for="customRadio1" class="custom-control-label">Crassna</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                      <input class="custom-control-input" type="radio" id="customRadio2" name="input-kelas" value="1">
+                      <label for="customRadio2" class="custom-control-label">Microcarpa</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-5 " >
+                  <div class="form-group">
+                    <div class="custom-control custom-radio" style="margin-bottom: 10px">
+                      <input class="custom-control-input" type="radio" id="customRadio3" name="input-kelas" value="2">
+                      <label for="customRadio3" class="custom-control-label">Sinensis</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                      <input class="custom-control-input" type="radio" id="customRadio4" name="input-kelas" value="3">
+                      <label for="customRadio4" class="custom-control-label">Subintegra</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+
+            </div>
+            <div class="card-footer">
+              {% csrf_token %}
+              <button type="button" id="btn-submit"  class="btn btn-info float-right">Submit</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-7 ">
+          <div class="card">
+            <div class="card-body">
+              <div class="img-container">
+                <img id="image"  src="{% static 'images/empty-images.png' %}" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content-result">
+
+        <div class="row">
+          <div class="col-4">
+            <div class="card">
+              <div class="card-body">
+                <img  class="center-image-card" id="image-clean" src="{% static 'images/Crassna (1).jpg' %}" alt="">
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card">
+              <div class="card-body">
+                <img  class="center-image-card" id="image-gray" src="{% static 'images/Crassna (1)-gray.jpg' %}" alt="">
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card">
+              <div class="card-body">
+                <img  class="center-image-card" id="image-binary" src="{% static 'images/Crassna (1)-cleaned.jpg' %}" alt="">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle" align="center">-Disclaimer-</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h6 class="text-center mb-4 text-muted">
+            Direkomendasikan File dengan Ukuran Max *5Mb<hr>
+            Pastikan <i>Background</i> Citra Daun Berwarna Putih<hr>
+            Proses Klasifikasi hanya dilakukan pada daun gaharu saja
+          </h6>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock content %}
+  {% block export-js %}
+  <!-- DataTables -->
+  <script src="{% static "plugins/datatables/jquery.dataTables.min.js" %}"></script>
+  <script src="{% static "plugins/datatables-bs4/js/dataTables.bootstrap4.min.js" %}"></script>
+  <script src="{% static "plugins/datatables-responsive/js/dataTables.responsive.min.js" %}"></script>
+  <script src="{% static "plugins/datatables-responsive/js/responsive.bootstrap4.min.js" %}"></script>
+  <script src="{% static "plugins/cropperjs/dist/cropper.min.js" %}"></script>
+  {% endblock export-js %}
+  {% block js %}
+  <script>
+  var events = $('#events');
+  var $inputImg = $("input[name='input-image']");
+  var image = $("#image");
+  var filename;
+  var cropper;
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  $inputImg.change(function(e) {
+
+
+    var files = e.target.files;
+    var done = function (url) {
+      image.attr('src',url);
+    };
+    var reader;
+    var file;
+    var url;
+    if (files && files.length > 0) {
+      if (cropper) {
+        cropper.destroy();
+        cropper = null;
+      }
+
+      file = files[0];
+      console.log(file)
+      filename = file.name
+      if (URL) {
+        done(URL.createObjectURL(file));
+      } else if (FileReader) {
+        reader = new FileReader();
+        reader.onload = function (e) {
+          done(reader.result);
+        };
+        reader.readAsDataURL(file);
+      }
+      cropper = new Cropper(image[0], {
+        strict: true,
+        viewMode: 2,
+        cropBoxResizable: false,
+        aspectRatio: 2/3,
+        autoCropArea: 0.7,
+        cropBoxMovable: true,
+        dragMode: 'none',
+        center: true,
+        zoomOnWheel: false,
+      // preview: '.preview'
+    });
+    }
+  });
+  var btnSubmit = $("#btn-submit");
+  btnSubmit.click(function(event) {
+    if (!validateData()) {
+      alert('nonono');
+      return;
+    }
+    var overlayContent = overlaySelector.content.cloneNode(true);
+    $("#content-hasil").append(overlayContent);
+    if (cropper) {
+      canvas = cropper.getCroppedCanvas({
+        width: 200,
+        height: 300,
+      });
+      canvas.toBlob(function(blob) {
+        var reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = function() {
+          base64data = reader.result;
+          var kelas = $("input[name='input-kelas']:checked").val();
+          $.ajax({
+            headers: {'X-CSRFToken': csrftoken},
+            type: "POST",
+            dataType: "json",
+            url: "{% url 'gaharu/proses_tambah_data_master' %}",
+            data: {image: base64data, kelas:kelas},
+            beforeSend: function (xhr) {
+              xhr.overrideMimeType('text/plain; charset=x-user-defined');
+            },
+            success: function (result, textStatus, jqXHR) {
+              var response = jqXHR.responseJSON;
+
+              $("#image-clean").attr("src", "data:image/png;base64,"+(response.image_clean));
+              $("#image-gray").attr("src", "data:image/png;base64,"+(response.image_gray));
+              $("#image-binary").attr("src", "data:image/png;base64,"+(response.image_binary));
+
+              cropper.destroy();
+              cropper = null;
+
+              $("#image").attr('src', "/media/empty-images.png");
+              filename = null;
+
+            },
+            error: function(xhr, textStatus, errorThrown){
+              alert("Error in getting document "+textStatus);
+            }
+          })
+          .done(function(result) {
+            // if (result.success == 1) {
+            //   cropper.destroy();
+            //   cropper = null;
+
+            //   $("#image").attr('src', "/media/empty-images.png");
+            //   filename = null;
+
+            // }
+          })
+          .always(function() {
+            $("#content-hasil").find(".overlay").remove();
+          })
+        }
+      });
+    }
+  });
+
+  $('.card-body').keypress(function (e) {
+   var key = e.which;
+   if(key == 13)  
+   {
+    btnSubmit.click();
+    return false;  
+  }
+});  
+
+  function validateData() {
+    var kelas = $("input[name='input-kelas']:checked").val();
+    console.log(kelas);
+    var imgname = filename;
+    console.log(imgname);
+
+    if (kelas == 'undefined' || kelas == null || kelas == "") {
+      return false;
+    }
+    if (imgname == null || imgname == "") {
+      return false;
+    }
+
+    return true;
+  }
+  function base64Encode(str) {
+    var CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    var out = "", i = 0, len = str.length, c1, c2, c3;
+    while (i < len) {
+      c1 = str.charCodeAt(i++) & 0xff;
+      if (i == len) {
+        out += CHARS.charAt(c1 >> 2);
+        out += CHARS.charAt((c1 & 0x3) << 4);
+        out += "==";
+        break;
+      }
+      c2 = str.charCodeAt(i++);
+      if (i == len) {
+        out += CHARS.charAt(c1 >> 2);
+        out += CHARS.charAt(((c1 & 0x3)<< 4) | ((c2 & 0xF0) >> 4));
+        out += CHARS.charAt((c2 & 0xF) << 2);
+        out += "=";
+        break;
+      }
+      c3 = str.charCodeAt(i++);
+      out += CHARS.charAt(c1 >> 2);
+      out += CHARS.charAt(((c1 & 0x3) << 4) | ((c2 & 0xF0) >> 4));
+      out += CHARS.charAt(((c2 & 0xF) << 2) | ((c3 & 0xC0) >> 6));
+      out += CHARS.charAt(c3 & 0x3F);
+    }
+    return out;
+  }
+  </script>
+  {% endblock js %}

@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+{% load static %}
+{% block export-css %}
+<!-- DataTables -->
+<link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/datatables-responsive/css/responsive.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static "plugins/cropperjs/dist/cropper.min.css" %}">
+{% endblock export-css %}
+{% block css %}
+<style type="text/css">
+img {
+  display: block;
+  max-width: 100%;
+}
+.preview {
+  overflow: hidden;
+  width: 160px; 
+  height: 160px;
+  margin: 10px;
+  border: 1px solid red;
+}
+.modal-lg{
+  max-width: 1000px !important;
+}
+</style>
+{% endblock css %}
+{% block content %}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark">Data Master</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6 text-right">
+        <button type="button" class="btn-tambah" onclick="location.href='{% url 'gaharu/tambah_data_master' %}'" class="btn btn-primary">Tambah Data</button>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <div class="table-responsive">
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>GAMBAR</th>
+                    <th>FORM_FACTOR</th>
+                    <th>ASPECT_RATIO</th>
+                    <th>RECT</th>
+                    <th>NARROW_FACTOR</th>
+                    <th>PRD</th>
+                    <th>PLW</th>
+                    <th>IDM</th>
+                    <th>ENTROPY</th>
+                    <th>ASM</th>
+                    <th>CONTRAST</th>
+                    <th>CORRELATION</th>
+                    <th>KELAS</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for dataset in datasets %}
+                  <tr>
+                    <td>{{ dataset.id }}</td>
+                    <td><a data-fancybox href="{{   dataset.filename.url  }}"><img src="{{   dataset.filename.url  }}" alt=""></a></td>
+                    <td>{{ dataset.form_factor }}</td>
+                    <td>{{ dataset.aspect_ratio }}</td>
+                    <td>{{ dataset.rect }}</td>
+                    <td>{{ dataset.narrow_factor }}</td>
+                    <td>{{ dataset.prd }}</td>
+                    <td>{{ dataset.plw }}</td>
+                    <td>{{ dataset.idm }}</td>
+                    <td>{{ dataset.entropy }}</td>
+                    <td>{{ dataset.asm }}</td>
+                    <td>{{ dataset.contrast }}</td>
+                    <td>{{ dataset.correlation }}</td>
+                    <td>{{ dataset.kelas }}</td>
+                    <td>
+                      <button class="btn btn-danger" type="button">Hapus</button>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+      <!-- /.col -->
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+<div class="modal fade" id="modal-default">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Default Modal</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form  id="form-upload">
+
+        <div class="card" id="card">
+
+          <div class="modal-body">
+
+            <!-- /.card -->
+
+
+            <div class="card-body">
+
+
+
+
+
+              <input type="file" name="input-image" class="form-control">
+              <br>
+              <div class="img-container">
+                <img id="image">
+
+              </div>
+              <br>
+              <div class="form-group">
+                <label >Kelas</label>
+                <select name="input-kelas" id="input-kelas" class="form-control" required>
+
+                  <option value="">Pilih Kelas</option>
+                  <option value="1">Gaharu</option>
+
+                </select>
+              </div>
+              {% csrf_token %}
+
+
+
+
+
+            </div>
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" id="btn-save">Save changes</button>
+          </div>
+
+
+        </div>
+      </form>
+
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.content -->
+
+
+{% endblock content %}
+
+{% block export-js %}
+<!-- DataTables -->
+<script src="{% static "plugins/datatables/jquery.dataTables.min.js" %}"></script>
+<script src="{% static "plugins/datatables-bs4/js/dataTables.bootstrap4.min.js" %}"></script>
+<script src="{% static "plugins/datatables-responsive/js/dataTables.responsive.min.js" %}"></script>
+<script src="{% static "plugins/datatables-responsive/js/responsive.bootstrap4.min.js" %}"></script>
+<script src="{% static "plugins/cropperjs/dist/cropper.min.js" %}"></script>
+{% endblock export-js %}
+
+{% block js %}
+<script>
+var $modalUpload = $("#modal-default");
+var $btnShowModal = $("#btn-tambah");
+var $inputImg = $("input[name='input-image']");
+var $inputKelas = $("input[name='input-kelas']");
+var image = $("#image");
+var filename;
+var cropper;
+const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+var overlayEl = document.querySelector("#overlay");
+var overlayTemplate = overlayEl.content.cloneNode(true);
+
+
+
+
+$("table").DataTable();
+
+$btnShowModal.click(function() {
+  $modalUpload.modal("show");
+});
+
+$inputImg.change(function(e) {
+  if (cropper) {
+    cropper.destroy();
+    cropper = null;
+  }
+  var files = e.target.files;
+  var done = function (url) {
+    image.attr('src',url);
+  };
+  var reader;
+  var file;
+  var url;
+
+  if (files && files.length > 0) {
+    file = files[0];
+    console.log(file)
+    if (URL) {
+      done(URL.createObjectURL(file));
+    } else if (FileReader) {
+      reader = new FileReader();
+      reader.onload = function (e) {
+        done(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+    cropper = new Cropper(image[0], {
+      aspectRatio: 2/3,
+      viewMode: 3,
+      autoCropArea: 1,
+      center: true,
+      restore: false,
+      zoomOnWheel: false
+      // preview: '.preview'
+    });
+  }
+});
+
+
+$("#form-upload").submit(function(event) {
+  event.preventDefault();
+  var kelas = $("#input-kelas").val();
+
+  canvas = cropper.getCroppedCanvas({
+    width: 200,
+    height: 300,
+  });
+  canvas.toBlob(function(blob) {
+    url = URL.createObjectURL(blob);
+    var reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = function() {
+      var base64data = reader.result;
+
+      $.ajax({
+        headers: {'X-CSRFToken': csrftoken},
+        type: "POST",
+        dataType: "json",
+        url: "{% url 'gaharu/proses_input' %}",
+        data: {image: base64data, kelas: kelas},
+        beforeSend: function(){
+         $("#card").append(overlayTemplate);
+       }
+     })
+      .done(function(result) {
+        if (result.success == 1) {
+
+          window.location.reload(false);
+        }
+      })
+      .always(function() {
+
+        $("#card").find(".overlay").remove();
+      })
+
+
+
+    }
+  });
+});
+
+
+
+</script>
+{% endblock js %}
