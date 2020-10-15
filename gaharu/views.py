@@ -192,7 +192,7 @@ def proses_pelatihan(request):
     persen_uji = float(request.POST.get('persen_uji')) if request.POST.get(
         'persen_uji') else float(20)
 
-    dataset = Dataset.pdobjects.all().to_dataframe()[:100]
+    dataset = Dataset.pdobjects.all().to_dataframe()
     columns = ['id', 'form_factor', 'aspect_ratio', 'rect',
                'narrow_factor', 'prd', 'plw', 'idm', 'entropy', 'asm', 'contrast',
                'correlation', 'kelas']
