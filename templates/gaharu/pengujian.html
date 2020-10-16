@@ -55,7 +55,7 @@ img {
               <table id="table-model-anfis" class="table table-bordered table-striped">
                 <thead>
                   <tr>
-                    <th>ID</th>
+                    <th>No</th>
                     <th>Data Latih</th>
                     <th>Data Uji</th>
                     <th>Epoch</th>
@@ -64,8 +64,8 @@ img {
                 </thead>
                 <tbody>
                   {% for model in models %}
-                  <tr>
-                    <td>{{ model.id }}</td>
+                  <tr data-model-id="{{ model.id }}">
+                    <td>{{ forloop.counter }}</td>
                     <td>{{ model.jumlah_data_latih }}</td>
                     <td>{{ model.jumlah_data_uji }}</td>
                     <td>{{ model.epoch }}</td>
@@ -263,7 +263,8 @@ var tableModelAnfis = $("#table-model-anfis").DataTable({
 });
 tableModelAnfis.on( 'select', function ( e, dt, type, indexes ) {
   if ( type === 'row' ) {
-    model_id = tableModelAnfis.rows( indexes ).data()[0][0];
+    model_id = $(tableModelAnfis.rows( indexes ).nodes()).data("modelId");
+    
   }
 } );
 tableModelAnfis.on( 'deselect', function ( e, dt, type, indexes ) {

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta name="description" content="" />
   <meta name="author" content="" />
-  <title>Grayscale - Start Bootstrap Theme</title>
+  <title>Sistem Klasifikasi Gaharu</title>
   <link rel="icon" type="image/x-icon" href="{% static 'grayscale/assets/img/favicon.ico' %}" />
   <!-- Font Awesome icons (free version)-->
   <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
@@ -198,7 +198,7 @@
         <div class="card">
           <div class="card-header">
             <div class="callout callout-info">
-              <h5><i class="fas fa-info"></i> Note:</h5>
+              <h5><i class="fas fa-info-circle"></i> Note:</h5>
               Pilih salah satu model dibawah ini untuk digunakan pada pengujian.
             </div>
           </div>
@@ -207,7 +207,7 @@
               <table id="table-model-anfis" class="table table-bordered table-striped">
                 <thead>
                   <tr>
-                    <th>ID</th>
+                    <th>No</th>
                     <th>Data Latih</th>
                     <th>Data Uji</th>
                     <th>Epoch</th>
@@ -216,8 +216,8 @@
                 </thead>
                 <tbody>
                   {% for model in models %}
-                  <tr>
-                    <td>{{ model.id }}</td>
+                  <tr data-model-id="{{ model.id }}">
+                    <td>{{ forloop.counter }}</td>
                     <td>{{ model.jumlah_data_latih }}</td>
                     <td>{{ model.jumlah_data_uji }}</td>
                     <td>{{ model.epoch }}</td>
@@ -235,8 +235,8 @@
         <div class="card shadow">
           <div class="card-header">
             <div class="callout callout-info">
-              <h5><i class="fas fa-info"></i> Note:</h5>
-              Crop Data sesuaikan dengan keinginan.
+              <h5><i class="fas fa-info-circle"></i> Note:</h5>
+              Crop Data sesuaikan dengan keinginan. <b>-Ratio 2:3-</b>
             </div>
           </div>
           <div class="card-body">
@@ -363,7 +363,7 @@
   });
   tableModelAnfis.on( 'select', function ( e, dt, type, indexes ) {
     if ( type === 'row' ) {
-      model_id = tableModelAnfis.rows( indexes ).data()[0][0];
+      model_id = $(tableModelAnfis.rows( indexes ).nodes()).data("modelId");
     }
   } );
   tableModelAnfis.on( 'deselect', function ( e, dt, type, indexes ) {
@@ -417,7 +417,7 @@
   var btnKlasifikasi = $("#btn-klasifikasi");
   btnKlasifikasi.click(function(event) {
     if (!validateData()) {
-      return alert("no no no");
+      return alert("Silahkan Pilih Data Model terlebih dahulu");
     }
     model_id = model_id;
     if (cropper) {

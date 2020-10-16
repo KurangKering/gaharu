@@ -75,7 +75,7 @@ img {
               <table class="table table-striped" id="table-data-latih">
                 <thead>
                   <tr>
-                    <th>ID</th>
+                    <th>No</th>
                     <th>FORM_FACTOR</th>
                     <th>ASPECT_RATIO</th>
                     <th>RECT</th>
@@ -93,7 +93,7 @@ img {
                 <tbody>
                   {% for train in table_train  %}
                   <tr>
-                    <td>{{ train.id }}</td>
+                    <td>{{ forloop.counter }}</td>
                     <td>{{ train.form_factor }}</td>
                     <td>{{ train.aspect_ratio }}</td>
                     <td>{{ train.rect }}</td>
@@ -127,7 +127,7 @@ img {
               <table class="table table-striped" id="table-data-uji">
                 <thead>
                   <tr>
-                    <th>ID</th>
+                    <th>No</th>
                     <th>FORM_FACTOR</th>
                     <th>ASPECT_RATIO</th>
                     <th>RECT</th>
@@ -146,7 +146,7 @@ img {
                 <tbody>
                   {% for test in table_test  %}
                   <tr>
-                    <td>{{ test.id }}</td>
+                    <td>{{ forloop.counter }}</td>
                     <td>{{ test.form_factor }}</td>
                     <td>{{ test.aspect_ratio }}</td>
                     <td>{{ test.rect }}</td>

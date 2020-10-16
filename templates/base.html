@@ -13,6 +13,7 @@
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <link rel="stylesheet" href="{% static "plugins/fancybox/jquery.fancybox.min.css" %}">
+  <link href="{% static 'plugins/iziModal-1.5.1/css/iziModal.min.css' %}" rel="stylesheet" />
 
   {% block export-css %}
 
@@ -66,9 +67,9 @@
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <!-- Brand Logo -->
       <a href="{% static "index3.html" %}" class="brand-link">
-        <img src="{% static "dist/img/AdminLTELogo.png" %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+        <img src="{% static "dist/img/logoo.png" %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
         style="opacity: .8">
-        <span class="brand-text font-weight-light">AdminLTE 3</span>
+        <span class="brand-text font-weight-light">Dash Admin</span>
       </a>
 
       <!-- Sidebar -->
@@ -76,10 +77,10 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
           <div class="image">
-            <img src="{% static "dist/img/user2-160x160.jpg" %}" class="img-circle elevation-2" alt="User Image">
+            <img src="{% static "dist/img/avatar5.png" %}" class="img-circle elevation-2" alt="User Image">
           </div>
           <div class="info">
-            <a href="{% static "#" %}" class="d-block">{{ user.username }}</a>
+            <a href="{% static "#" %}" class="d-block">User : {{ user.username }}</a>
           </div>
         </div>
 
@@ -182,6 +183,10 @@
   <script src="{% static "plugins/daterangepicker/daterangepicker.js" %}"></script>
   <!-- Tempusdominus Bootstrap 4 -->
   <script src="{% static "plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js" %}"></script>
+
+
+  <script src="{% static 'plugins/iziModal-1.5.1/js/iziModal.min.js' %}"></script>
+
   <!-- Summernote -->
   <script src="{% static "plugins/summernote/summernote-bs4.min.js" %}"></script>
   <script src="{% static "plugins/fullscreen-loading/js/jquery.loadingModal.min.js" %}"></script>
