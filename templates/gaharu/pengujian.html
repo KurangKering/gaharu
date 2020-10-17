@@ -315,7 +315,7 @@ $inputImg.change(function(e) {
 var btnMulaiPengujian = $("#btn-mulai-pengujian");
 btnMulaiPengujian.click(function(event) {
   if (!validateData()) {
-    return alert("no no no");
+    return alert("Periksa Kembali Model dan Citra yang dipilih");
   }
   var overlayContent = overlaySelector.content.cloneNode(true);
   $("#content-hasil").append(overlayContent);
