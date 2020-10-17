@@ -102,7 +102,7 @@ def process_pengujian(request):
     }
     kelas_kelas = ['CRASSNA', 'MICROCARPA', 'SINENSIS', 'SUBINTEGRA'];
     kelas_hasil = kelas_kelas[predicted.item()]
-
+    
     response = {
         'success': 1,
         'predicted': predicted.item(),

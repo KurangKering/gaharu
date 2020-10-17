@@ -51,7 +51,7 @@ img {
           <!-- /.card-header -->
           <div class="card-body">
             <div class="table-responsive">
-              <table id="example1" class="table table-bordered table-striped">
+              <table id="table-data-master" class="table table-bordered table-striped">
                 <thead>
                   <tr>
                     <th>ID</th>
@@ -73,9 +73,9 @@ img {
                 </thead>
                 <tbody>
                   {% for dataset in datasets %}
-                  <tr>
+                  <tr data-model-id="{{ dataset.id }}">
                     <td>{{ forloop.counter }}</td>
-                    <td><img  class="image-data" data-model-id="{{ dataset.id }}" src="{{   dataset.filename.url  }}" alt=""></td>
+                    <td><img  class="image-data"  src="{{   dataset.filename.url  }}" alt=""></td>
                     <td>{{ dataset.form_factor }}</td>
                     <td>{{ dataset.aspect_ratio }}</td>
                     <td>{{ dataset.rect }}</td>
@@ -288,7 +288,7 @@ $("#modal-large").iziModal({
 $("#modal-large").iziModal('setZindex', 99999);
 
 
-$("table").DataTable();
+$("#table-data-master").DataTable();
 
 $btnShowModal.click(function() {
   $modalUpload.modal("show");
@@ -399,8 +399,10 @@ function deleteData(id) {
 </script>
 
 <script>
-$(".image-data").click(function(e) {
-  var id = $(this).data('modelId');
+$('#table-data-master').on('click','.image-data',function () {
+
+
+  var id = $(this).closest("tr").data("modelId");
   detail_id = id;
   $.ajax({
     headers: {'X-CSRFToken': csrftoken},
@@ -430,7 +432,10 @@ $(".image-data").click(function(e) {
   });
 
 
+  
+
 });
+
 
 $(".btn-download").click(function() {
   var type = $(this).data('type');
