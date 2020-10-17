@@ -341,7 +341,7 @@ btnMulaiPengujian.click(function(event) {
         })
         .done(function(result) {
           if (result.success == 1) {
-            $("#place-result-here").html(result.predicted);
+            $("#place-result-here").html(result.kelas_hasil);
 
             $("#image-clean").attr("src", "data:image/png;base64,"+(result.image_clean));
             $("#image-gray").attr("src", "data:image/png;base64,"+(result.image_gray));
