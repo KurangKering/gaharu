@@ -509,7 +509,9 @@ def proses_pengujian(request):
         "contrast": contrast,
         "corr": corr,
     }
-
+    kelas_kelas = ['CRASSNA', 'MICROCARPA', 'SINENSIS', 'SUBINTEGRA'];
+    kelas_hasil = kelas_kelas[predicted.item()]
+    
     response = {
         'success': 1,
         'predicted': predicted.item(),
@@ -518,7 +520,8 @@ def proses_pengujian(request):
         'variables': variables,
         'image_clean': image_clean,
         'image_gray': image_gray,
-        'image_binary': image_binary
+        'image_binary': image_binary,
+        'kelas_hasil': kelas_hasil
 
     }
     return JsonResponse(response, safe=False)
