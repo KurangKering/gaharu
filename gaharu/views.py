@@ -319,8 +319,7 @@ def proses_pelatihan(request):
     test_data = test_data.astype({"kelas": int})
     test_data['kelas_predicted'] = Y_test_predicted.reshape(-1, 1)
 
-    table_train = json.loads(train_data.to_json(orient="records"))
-    table_test = json.loads(test_data.to_json(orient="records"))
+   
     accuracy = float((num_correct / Y_test.count()) * 100)
 
     train_data_ids = train_data['id'].tolist()
@@ -364,7 +363,13 @@ def proses_pelatihan(request):
     if (simpan == 1):
         save_model = Model(**model_to_database)
         save_model.save()
+    start_number = 1
+    train_data.insert(0, 'nomor', range(start_number, start_number + len(train_data)))
+    test_data.insert(0, 'nomor', range(start_number, start_number + len(test_data)))
 
+
+    table_train = json.loads(train_data.to_json(orient="records"))
+    table_test = json.loads(test_data.to_json(orient="records"))
     context = {
         "table_train": table_train,
         "table_test": table_test,
