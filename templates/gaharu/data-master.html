@@ -56,17 +56,17 @@ img {
                   <tr>
                     <th>NO</th>
                     <th>GAMBAR</th>
-                    <th>FORM_FACTOR</th>
+                    <th>ASM</th>
+                    <th>CONTRAST</th>
+                    <th>IDM</th>
+                    <th>ENTROPY</th>
+                    <th>CORRELATION</th>
                     <th>ASPECT_RATIO</th>
+                    <th>FORM_FACTOR</th>
                     <th>RECT</th>
                     <th>NARROW_FACTOR</th>
                     <th>PRD</th>
                     <th>PLW</th>
-                    <th>IDM</th>
-                    <th>ENTROPY</th>
-                    <th>ASM</th>
-                    <th>CONTRAST</th>
-                    <th>CORRELATION</th>
                     <th>KELAS</th>
                     <th>Action</th>
                   </tr>
@@ -76,17 +76,17 @@ img {
                   <tr>
                     <td>{{ forloop.counter }}</td>
                     <td><img  class="image-data" data-model-id="{{ dataset.id }}" src="{{   dataset.filename.url  }}" alt=""></td>
-                    <td>{{ dataset.form_factor }}</td>
+                    <td>{{ dataset.asm }}</td>
+                    <td>{{ dataset.contrast }}</td>
+                    <td>{{ dataset.idm }}</td>
+                    <td>{{ dataset.entropy }}</td>
+                    <td>{{ dataset.correlation }}</td>
                     <td>{{ dataset.aspect_ratio }}</td>
+                    <td>{{ dataset.form_factor }}</td>
                     <td>{{ dataset.rect }}</td>
                     <td>{{ dataset.narrow_factor }}</td>
                     <td>{{ dataset.prd }}</td>
                     <td>{{ dataset.plw }}</td>
-                    <td>{{ dataset.idm }}</td>
-                    <td>{{ dataset.entropy }}</td>
-                    <td>{{ dataset.asm }}</td>
-                    <td>{{ dataset.contrast }}</td>
-                    <td>{{ dataset.correlation }}</td>
                     <td>{{ dataset.kelas }}</td>
                     <td>
                       <button class="btn btn-danger" type="button" onclick="deleteData({{ dataset.id }})">Hapus</button>

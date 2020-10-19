@@ -116,20 +116,19 @@ img {
                   <table class="table table-striped" id="table-data-latih">
                     <thead>
                       <tr>
-                        <th>ID</th>
-                        <th>FORM_FACTOR</th>
+                        <th>NO</th>
+                        <th>ASM</th>
+                        <th>CONTRAST</th>
+                        <th>IDM</th>
+                        <th>ENTROPY</th>
+                        <th>CORRELATION</th>
                         <th>ASPECT_RATIO</th>
+                        <th>FORM_FACTOR</th>
                         <th>RECT</th>
                         <th>NARROW_FACTOR</th>
                         <th>PRD</th>
                         <th>PLW</th>
-                        <th>IDM</th>
-                        <th>ENTROPY</th>
-                        <th>ASM</th>
-                        <th>CONTRAST</th>
-                        <th>CORRELATION</th>
                         <th>KELAS</th>
-                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -157,17 +156,17 @@ img {
                     <thead>
                       <tr>
                         <th>NO</th>
-                        <th>FORM_FACTOR</th>
+                        <th>ASM</th>
+                        <th>CONTRAST</th>
+                        <th>IDM</th>
+                        <th>ENTROPY</th>
+                        <th>CORRELATION</th>
                         <th>ASPECT_RATIO</th>
+                        <th>FORM_FACTOR</th>
                         <th>RECT</th>
                         <th>NARROW_FACTOR</th>
                         <th>PRD</th>
                         <th>PLW</th>
-                        <th>IDM</th>
-                        <th>ENTROPY</th>
-                        <th>ASM</th>
-                        <th>CONTRAST</th>
-                        <th>CORRELATION</th>
                         <th>KELAS</th>
                         <th>Kelas Prediksi</th>
                       </tr>
@@ -211,17 +210,17 @@ img {
   var tableDataLatih = $("#table-data-latih").DataTable({
     "columns": [
     { "data": "id" },
-    { "data": "form_factor" },
+    { "data": "asm" },
+    { "data": "contrast" },
+    { "data": "idm" },
+    { "data": "entropy" },
+    { "data": "correlation" },
     { "data": "aspect_ratio" },
+    { "data": "form_factor" },
     { "data": "rect" },
     { "data": "narrow_factor" },
     { "data": "prd" },
     { "data": "plw" },
-    { "data": "idm" },
-    { "data": "entropy" },
-    { "data": "asm" },
-    { "data": "contrast" },
-    { "data": "correlation" },
     { "data": "kelas" },
     ],
     pageLength: 5,
@@ -231,17 +230,17 @@ img {
   var tableDataUji = $("#table-data-uji").DataTable({
     "columns": [
     { "data": "id" },
-    { "data": "form_factor" },
+    { "data": "asm" },
+    { "data": "contrast" },
+    { "data": "idm" },
+    { "data": "entropy" },
+    { "data": "correlation" },
     { "data": "aspect_ratio" },
+    { "data": "form_factor" },
     { "data": "rect" },
     { "data": "narrow_factor" },
     { "data": "prd" },
     { "data": "plw" },
-    { "data": "idm" },
-    { "data": "entropy" },
-    { "data": "asm" },
-    { "data": "contrast" },
-    { "data": "correlation" },
     { "data": "kelas" },
     { "data": "kelas_predicted" },
     ],
