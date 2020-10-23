@@ -38,14 +38,23 @@ class Pelatihan:
     def get_nama_model():
         return self.__nama_model
 
-    def mulai_pelatihan():
-    dataset = self.get_data()
+    def proses_pelatihan(request):
+    if not request.user.is_authenticated:
+        return redirect("index")
+    simpan = int(request.POST.get('simpan')
+                 ) if request.POST.get('simpan') else -1
+    epoch = int(request.POST.get('epoch')) if request.POST.get('epoch') else 1
+    persen_uji = float(request.POST.get('persen_uji')) if request.POST.get(
+        'persen_uji') else float(20)
+
+    dataset = Dataset.pdobjects.all().to_dataframe()
     columns = ['id', 'form_factor', 'aspect_ratio', 'rect',
                'narrow_factor', 'prd', 'plw', 'idm', 'entropy', 'asm', 'contrast',
                'correlation', 'kelas']
     df = dataset.loc[:, columns].copy()
+    persen_uji = persen_uji / 100
     train_df, test_df = train_test_split(
-        df, test_size=self.get_persentase(), stratify=df.loc[:, ['kelas']], random_state=None)
+        df, test_size=persen_uji, stratify=df.loc[:, ['kelas']], random_state=0)
     train_df = train_df.sort_index()
     test_df = test_df.sort_index()
 
@@ -71,14 +80,70 @@ class Pelatihan:
     cat_act, cat_pred = predict_data_test(model, X_test_scaled, Y_test_reshape)
 
     Y_test_predicted = cat_pred.cpu().detach().numpy()
-    num_correct = torch.sum(cat_act == cat_pred).item()
+    num_correct = sum_torch(cat_act == cat_pred).item()
 
     test_data = test_data.astype({"kelas": int})
     test_data['kelas_predicted'] = Y_test_predicted.reshape(-1, 1)
 
-    table_train = json.loads(train_data.to_json(orient="records"))
-    table_test = json.loads(test_data.to_json(orient="records"))
+   
     accuracy = float((num_correct / Y_test.count()) * 100)
 
     train_data_ids = train_data['id'].tolist()
     test_data_ids = test_data['id'].tolist()
+
+    pickle_data = {
+        'model': model,
+        'train_data': train_data,
+        'test_data': test_data,
+        'train_data_ids': train_data_ids,
+        'test_data_ids': test_data_ids,
+        'epoch': epoch,
+        'accuracy': accuracy,
+        'num_correct': num_correct,
+        'scaler': scaler
+    }
+
+    filename = str(uuid.uuid4())
+    dirwithfilename = join('models', filename)
+    path = join(settings.MEDIA_ROOT, dirwithfilename)
+
+
+    with open(path, 'wb') as handle:
+        pickle.dump(pickle_data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+    filename = filename
+    datalatih_ids = json.dumps(train_data_ids)
+    datauji_ids = json.dumps(test_data_ids)
+    accuracy = accuracy
+    total_data_test = len(test_data)
+
+    model_to_database = {
+        'filename': dirwithfilename,
+        'datalatih_ids': datalatih_ids,
+        'datauji_ids': datauji_ids,
+        'accuracy': accuracy,
+        'epoch': epoch
+    }
+
+    if (simpan == 1):
+        save_model = Model(**model_to_database)
+        save_model.save()
+    start_number = 1
+    train_data.insert(0, 'nomor', range(start_number, start_number + len(train_data)))
+    test_data.insert(0, 'nomor', range(start_number, start_number + len(test_data)))
+
+
+    table_train = json.loads(train_data.to_json(orient="records"))
+    table_test = json.loads(test_data.to_json(orient="records"))
+    context = {
+        "table_train": table_train,
+        "table_test": table_test,
+        "jumlah_benar": num_correct,
+        "total_data_test": total_data_test,
+        "akurasi": accuracy,
+        "epoch": epoch,
+    }
+    return JsonResponse(context, safe=False)
+
+

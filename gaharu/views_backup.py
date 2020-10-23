@@ -12,8 +12,11 @@ from PIL import Image
 from pprint import pprint
 from sklearn.model_selection import StratifiedKFold
 from itertools import islice, count
+from gaharu.libraries.anfis_pytorch.myanfis import train_hybrid_modified, predict_data_test, predict_pengujian
+from torch import sum as sum_torch
 import json
 from utils import pretty_request
+from .libraries.anfis_pytorch import myanfis
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 import pickle
@@ -22,7 +25,6 @@ from os.path import join
 from django.conf import settings
 import csv
 import tempfile
-
 
 def index(request):
     if not request.user.is_authenticated:
@@ -273,9 +275,6 @@ def tambah_model(request):
 def proses_pelatihan(request):
     if not request.user.is_authenticated:
         return redirect("index")
-    from gaharu.libraries.anfis_matlab import AnfisMatlab
-    import matlab
-    import matlab.engine
     simpan = int(request.POST.get('simpan')
                  ) if request.POST.get('simpan') else -1
     epoch = int(request.POST.get('epoch')) if request.POST.get('epoch') else 1
@@ -310,26 +309,15 @@ def proses_pelatihan(request):
     X_train_scaled_with_class = np.concatenate(
         (X_train_scaled, Y_train.to_numpy()), axis=1)
 
+    model = train_hybrid_modified(X_train_scaled_with_class, epoch)
     Y_test_reshape = Y_test.to_numpy().reshape(-1)
-    engine = matlab.engine.find_matlab()[0]
-    engine = matlab.engine.connect_matlab(engine)
-    matlablibdir = join(settings.BASE_DIR, 'matlab')
-    engine.cd(matlablibdir)
-    am = AnfisMatlab(engine)
-    filename = str(uuid.uuid4()) + ".fis"
-    radii = 0.5
-    savefis = join(settings.MEDIA_ROOT, 'fis', filename)
-    dirfis = am.make_fis(X_train_scaled, Y_train.to_numpy(), radii, savefis)
+    cat_act, cat_pred = predict_data_test(model, X_test_scaled, Y_test_reshape)
 
-    am.mulai_pelatihan(X_train_scaled_with_class, dirfis, epoch, dirfis)
-    predicted = am.mulai_pengujian(X_test_scaled, dirfis)
-    print(predicted)
-    flat_predicted = np.concatenate(predicted)
-    num_correct = int(np.sum(flat_predicted == Y_test_reshape))
-    print(num_correct)
+    Y_test_predicted = cat_pred.cpu().detach().numpy()
+    num_correct = sum_torch(cat_act == cat_pred).item()
 
     test_data = test_data.astype({"kelas": int})
-    test_data['kelas_predicted'] = flat_predicted.reshape(-1, 1)
+    test_data['kelas_predicted'] = Y_test_predicted.reshape(-1, 1)
 
    
     accuracy = float((num_correct / Y_test.count()) * 100)
@@ -338,7 +326,7 @@ def proses_pelatihan(request):
     test_data_ids = test_data['id'].tolist()
 
     pickle_data = {
-        'model': dirfis,
+        'model': model,
         'train_data': train_data,
         'test_data': test_data,
         'train_data_ids': train_data_ids,
@@ -349,6 +337,7 @@ def proses_pelatihan(request):
         'scaler': scaler
     }
 
+    filename = str(uuid.uuid4())
     dirwithfilename = join('models', filename)
     path = join(settings.MEDIA_ROOT, dirwithfilename)
 
@@ -357,6 +346,7 @@ def proses_pelatihan(request):
         pickle.dump(pickle_data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
+    filename = filename
     datalatih_ids = json.dumps(train_data_ids)
     datauji_ids = json.dumps(test_data_ids)
     accuracy = accuracy
@@ -373,9 +363,6 @@ def proses_pelatihan(request):
     if (simpan == 1):
         save_model = Model(**model_to_database)
         save_model.save()
-    else:
-        os.remove(dirfis)
-
     start_number = 1
     train_data.insert(0, 'nomor', range(start_number, start_number + len(train_data)))
     test_data.insert(0, 'nomor', range(start_number, start_number + len(test_data)))
@@ -383,16 +370,6 @@ def proses_pelatihan(request):
 
     table_train = json.loads(train_data.to_json(orient="records"))
     table_test = json.loads(test_data.to_json(orient="records"))
-    context = {
-        "table_train": table_train,
-        "table_test": table_test,
-        "jumlah_benar": num_correct,
-        "total_data_test": total_data_test,
-        "akurasi": accuracy,
-        "epoch": epoch,
-    }
-
-
     context = {
         "table_train": table_train,
         "table_test": table_test,
@@ -459,7 +436,92 @@ def pengujian(request):
     return render(request, 'gaharu/pengujian.html', context)
 
 def proses_pengujian(request):
+    if not request.user.is_authenticated:
+        return redirect("index")
+    model_id = int(request.POST.get('model_id'))
+    image64 = request.POST.get('image')
+    formatt, imgstr = image64.split(';base64,')
+    ext = formatt.split('/')[-1]
+    filename = str(uuid.uuid4())
+    fileImg = ContentFile(base64.b64decode(imgstr), name=filename + "." + ext)
+    image = cv2.imdecode(np.fromstring(fileImg.read(), np.uint8), 1)
+
+    morfologi = Morfologi(image)
+    glcm = GLCM(image)
+
+    image_gray = morfologi.gray
+    image_binary = morfologi.cleaned.astype(int)*255
+
+    image_clean = base64.b64encode(cv2.imencode('.jpg', image)[1]).decode()
+    image_gray = base64.b64encode(cv2.imencode('.jpg', image_gray)[1]).decode()
+    image_binary = base64.b64encode(cv2.imencode('.jpg', image_binary)[1]).decode()
+
+    ROUNDING = 5
+    prd      =  round(morfologi.prd(), ROUNDING)
+    plw      =  round(morfologi.plw(), ROUNDING)
+    rect     =  round(morfologi.rect(), ROUNDING)
+    nf       =  round(morfologi.narrow_factor(), ROUNDING)
+    ar       =  round(morfologi.aspect_ratio(), ROUNDING)
+    ff       =  round(morfologi.form_factor(), ROUNDING)
+
+    idm      = round(glcm.idm(), ROUNDING)
+    entropy  = round(glcm.entropy(), ROUNDING)
+    asm      = round(glcm.asm(), ROUNDING)
+    contrast = round(glcm.contrast(), ROUNDING)
+    corr     = round(glcm.korelasi(), ROUNDING)
+
+    dataset = {}
+    dataset['form_factor'] = ff
+    dataset['aspect_ratio'] = ar
+    dataset['rect'] = rect
+    dataset['narrow_factor'] = nf
+    dataset['prd'] = prd
+    dataset['plw'] = plw
+    dataset['idm'] = idm
+    dataset['entropy'] = entropy
+    dataset['asm'] = asm
+    dataset['contrast'] = contrast
+    dataset['correlation'] = corr
+
+    test_data = np.fromiter(dataset.values(), dtype=float).reshape(1,-1)
+
+
+    model = Model.objects.get(id=model_id)
+    model_path = model.filename.path
+
+    with open(model_path, 'rb') as handle:
+        model_file = pickle.load(handle)
+
+    scaler = model_file['scaler']
+    model_anfis = model_file['model'];
+    test_data_scaled = scaler.transform(test_data)
+    predicted =  predict_pengujian(model_anfis, test_data_scaled)
+    variables = {
+        "prd": prd,
+        "plw": plw,
+        "rect": rect,
+        "nf": nf,
+        "ar": ar,
+        "ff": ff,
+        "idm": idm,
+        "entropy": entropy,
+        "asm": asm,
+        "contrast": contrast,
+        "corr": corr,
+    }
+    kelas_kelas = ['CRASSNA', 'MICROCARPA', 'SINENSIS', 'SUBINTEGRA'];
+    kelas_hasil = kelas_kelas[predicted.item()]
+    
     response = {
-    'cdsfs':'sfsd'
+        'success': 1,
+        'predicted': predicted.item(),
+        'fitur': json.dumps(dataset),
+        'fitur_scaled': list(test_data_scaled.reshape(-1)),
+        'variables': variables,
+        'image_clean': image_clean,
+        'image_gray': image_gray,
+        'image_binary': image_binary,
+        'kelas_hasil': kelas_hasil
+
     }
     return JsonResponse(response, safe=False)
