@@ -19,6 +19,9 @@
   <link rel="stylesheet" href="{% static "plugins/datatables-responsive/css/responsive.bootstrap4.min.css" %}">
   <link rel="stylesheet" href="{% static "plugins/datatables-select/css/select.bootstrap4.css" %}">
   <link rel="stylesheet" href="{% static "plugins/datatables-buttons/css/buttons.bootstrap4.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'plugins/sweetalert2/sweetalert2.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'plugins/spinjs/spin.css' %}">
+
   <link rel="stylesheet" href="{% static "plugins/cropperjs/dist/cropper.min.css" %}">
   <link href="{% static 'grayscale/css/styles.css' %}" rel="stylesheet" />
   <style>
@@ -41,6 +44,9 @@
     margin-right: auto;
     width: 200px;
     height: 300px;
+  }
+  .swal2-container {
+    z-index: 999999 !important;
   }
   </style>
 </head>
@@ -308,13 +314,14 @@
   <script src="{% static "plugins/datatables-select/js/dataTables.select.min.js" %}"></script>
   <script src="{% static "plugins/datatables-buttons/js/dataTables.buttons.min.js" %}"></script>
   <script src="{% static "plugins/cropperjs/dist/cropper.min.js" %}"></script>
-
+  <script  src="{% static 'plugins/spinjs/spin.umd.js' %}"></script>
+  <script src="{% static 'plugins/sweetalert2/sweetalert2.all.min.js' %}"></script>
   <script src="{% static 'plugins/iziModal-1.5.1/js/iziModal.min.js' %}"></script>
   <!-- Core theme JS-->
   <script src="{% static 'grayscale/js/scripts.js' %}"></script>
 
   <script>
-
+  
   $("#modal-large").iziModal({
     history: false,
     title: "Klasifikasi",
@@ -375,7 +382,7 @@
   var cropper;
   const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
   $inputImg.change(function(e) {
-    $("#modal-large").iziModal("open");
+    
     var files = e.target.files;
     var done = function (url) {
       image.attr('src',url);
@@ -384,6 +391,8 @@
     var file;
     var url;
     if (files && files.length > 0) {
+      $("#modal-large").iziModal("open");
+      $("#content-hasil").hide();
 
 
       if (cropper) {
@@ -417,7 +426,15 @@
   var btnKlasifikasi = $("#btn-klasifikasi");
   btnKlasifikasi.click(function(event) {
     if (!validateData()) {
-      return alert("Silahkan Pilih Data Model terlebih dahulu");
+      Swal.fire({
+       title: 'Gagal !',
+       text: 'Periksa kembali',
+       icon: 'warning',
+       showConfirmButton: false,
+       timer: 1000,
+
+     })
+      return;
     }
     model_id = model_id;
     if (cropper) {

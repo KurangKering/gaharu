@@ -273,103 +273,144 @@ tableModelAnfis.on( 'deselect', function ( e, dt, type, indexes ) {
 var $inputImg = $("input[name='input-image']");
 var image = $("#image");
 var filename;
+var fileHard;
 var cropper;
 const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 $inputImg.change(function(e) {
+  resetValues();
   var files = e.target.files;
   var done = function (url) {
     image.attr('src',url);
   };
   var reader;
-  var file;
   var url;
   if (files && files.length > 0) {
-    if (cropper) {
-      cropper.destroy();
-      cropper = null;
-    }
-    file = files[0];
-    console.log(file)
-    if (URL) {
-      done(URL.createObjectURL(file));
-    } else if (FileReader) {
-      reader = new FileReader();
-      reader.onload = function (e) {
-        done(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-    cropper = new Cropper(image[0], {
-      strict: true,
-      viewMode: 2,
-      cropBoxResizable: false,
-      aspectRatio: 2/3,
-      autoCropArea: 0.7,
-      cropBoxMovable: true,
-      dragMode: 'none',
-      center: true,
-      zoomOnWheel: false,
-    });
+
+   if (cropper) {
+    cropper.destroy();
+    cropper = null;
   }
+  fileHard = files[0];
+  if (URL) {
+    done(URL.createObjectURL(fileHard));
+  } else if (FileReader) {
+    reader = new FileReader();
+    reader.onload = function (e) {
+      done(reader.result);
+    };
+    reader.readAsDataURL(fileHard);
+  }
+  cropper = new Cropper(image[0], {
+    strict: true,
+    viewMode: 2,
+    cropBoxResizable: false,
+    aspectRatio: 2/3,
+    autoCropArea: 0.7,
+    cropBoxMovable: true,
+    dragMode: 'none',
+    center: true,
+    zoomOnWheel: false,
+  });
+
+} else {
+  fileHard = null;
+  if (cropper) {
+    cropper.destroy();
+    cropper = null;
+  }
+}
 });
 var btnMulaiPengujian = $("#btn-mulai-pengujian");
 btnMulaiPengujian.click(function(event) {
   if (!validateData()) {
-    return alert("no no no");
-  }
-  var overlayContent = overlaySelector.content.cloneNode(true);
-  $("#content-hasil").append(overlayContent);
-  model_id = model_id;
-  if (cropper) {
-    canvas = cropper.getCroppedCanvas({
-      width: 200,
-      height: 300,
-    });
-    canvas.toBlob(function(blob) {
-      var reader = new FileReader();
-      reader.readAsDataURL(blob);
-      reader.onloadend = function() {
-        var base64data = reader.result;
-        $.ajax({
-          headers: {'X-CSRFToken': csrftoken},
-          type: "POST",
-          dataType: "json",
-          url: "{% url 'gaharu/proses_pengujian' %}",
-          data: {image: base64data, model_id:model_id},
-          beforeSend: function(){
-          }
-        })
-        .done(function(result) {
-          if (result.success == 1) {
-            $("#place-result-here").html(result.kelas_hasil);
+   Swal.fire({
+     title: 'Gagal !',
+     text: 'Periksa kembali',
+     icon: 'warning',
+     showConfirmButton: false,
+     timer: 1000,
+   })
+   return;
+ }
+ showSpinner();
 
-            $("#image-clean").attr("src", "data:image/png;base64,"+(result.image_clean));
-            $("#image-gray").attr("src", "data:image/png;base64,"+(result.image_gray));
-            $("#image-binary").attr("src", "data:image/png;base64,"+(result.image_binary));
-            $("#prd").text(result.variables.prd);
-            $("#plw").text(result.variables.plw);
-            $("#rect").text(result.variables.rect);
-            $("#nf").text(result.variables.nf);
-            $("#ar").text(result.variables.ar);
-            $("#ff").text(result.variables.ff);
-            $("#idm").text(result.variables.idm);
-            $("#entropy").text(result.variables.entropy);
-            $("#asm").text(result.variables.asm);
-            $("#contrast").text(result.variables.contrast);
-            $("#corr").text(result.variables.corr);
-          }
-        })
-        .always(function() {
-          $("#content-hasil").find(".overlay").remove();
-        })
-      }
-    });
-  }
+ model_id = model_id;
+ if (cropper) {
+  canvas = cropper.getCroppedCanvas({
+    width: 200,
+    height: 300,
+  });
+  canvas.toBlob(function(blob) {
+    var reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = function() {
+      var base64data = reader.result;
+      $.ajax({
+        headers: {'X-CSRFToken': csrftoken},
+        type: "POST",
+        dataType: "json",
+        url: "{% url 'gaharu/proses_pengujian' %}",
+        data: {image: base64data, model_id:model_id},
+        beforeSend: function(){
+        }
+      })
+      .done(function(result) {
+        if (result.success == 1) {
+          $("#place-result-here").html(result.kelas_hasil);
+
+          $("#image-clean").attr("src", "data:image/png;base64,"+(result.image_clean));
+          $("#image-gray").attr("src", "data:image/png;base64,"+(result.image_gray));
+          $("#image-binary").attr("src", "data:image/png;base64,"+(result.image_binary));
+          $("#prd").text(result.variables.prd);
+          $("#plw").text(result.variables.plw);
+          $("#rect").text(result.variables.rect);
+          $("#nf").text(result.variables.nf);
+          $("#ar").text(result.variables.ar);
+          $("#ff").text(result.variables.ff);
+          $("#idm").text(result.variables.idm);
+          $("#entropy").text(result.variables.entropy);
+          $("#asm").text(result.variables.asm);
+          $("#contrast").text(result.variables.contrast);
+          $("#corr").text(result.variables.corr);
+        }
+      })
+      .always(function() {
+        hideSpinner();
+
+      })
+    }
+  });
+}
 });
+
+function resetValues() {
+  $("#place-result-here").html("");
+
+  $("#image").attr('src',"{% static 'images/empty-images.png' %}");
+  $("#image-clean").attr("src", "{% static 'images/empty-images.png' %}");
+  $("#image-gray").attr("src", "{% static 'images/empty-images.png' %}");
+  $("#image-binary").attr("src", "{% static 'images/empty-images.png' %}");
+  $("#prd").text("");
+  $("#plw").text("");
+  $("#rect").text("");
+  $("#nf").text("");
+  $("#ar").text("");
+  $("#ff").text("");
+  $("#idm").text("");
+  $("#entropy").text("");
+  $("#asm").text("");
+  $("#contrast").text("");
+  $("#corr").text("");
+}
+
 function validateData() {
-  if (model_id == "" || model_id == null) {
+  if (model_id == "")
     return false;
-  }
+  if (model_id == null)
+    return false;
+  if (fileHard == null)
+    return false;
+
   return true;
 }
 </script>

@@ -33,7 +33,7 @@ img {
         <h1 class="m-0 text-dark">Data Master</h1>
       </div><!-- /.col -->
       <div class="col-sm-6 text-right">
-        <button type="button" class="btn-tambah" onclick="location.href='{% url 'gaharu/tambah_data_master' %}'" class="btn btn-primary">Tambah Data</button>
+        <button type="button" class="btn-tambah btn btn-primary" onclick="location.href='{% url 'gaharu/tambah_data_master' %}'" class="btn btn-primary">Tambah Data</button>
       </div><!-- /.col -->
     </div><!-- /.row -->
   </div><!-- /.container-fluid -->
@@ -87,7 +87,7 @@ img {
                     <td>{{ dataset.asm }}</td>
                     <td>{{ dataset.contrast }}</td>
                     <td>{{ dataset.correlation }}</td>
-                    <td>{{ dataset.kelas }}</td>
+                    <td>{{ dataset.get_kelas_display }}</td>
                     <td>
                       <button class="btn btn-danger" type="button" onclick="deleteData({{ dataset.id }})">Hapus</button>
                     </td>

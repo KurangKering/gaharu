@@ -16,10 +16,21 @@ class Dataset(models.Model):
     asm = models.FloatField(null=True, blank=True)
     contrast = models.FloatField(null=True, blank=True)
     correlation = models.FloatField(null=True, blank=True)
-    kelas = models.IntegerField(null=True, blank=True)
-    is_extracted = models.CharField(max_length=1, null=True, blank=True)
-    pdobjects = DataFrameManager()
 
+    CRASSNA = 0
+    MICROCARPA = 1
+    SINENSIS = 2
+    SUBINTEGRA = 3
+
+    KELAS_CHOICES = [
+        (CRASSNA, 'CRASSNA'),
+        (MICROCARPA, 'MICROCARPA'),
+        (SINENSIS, 'SINENSIS'),
+        (SUBINTEGRA, 'SUBINTEGRA'),
+    ]
+    kelas = models.IntegerField(null=True, blank=True, choices=KELAS_CHOICES)
+    is_extracted = models.CharField(max_length=1, null=True, blank=True)
+    
 
 class Model(models.Model):
     filename = models.FileField(upload_to="models")

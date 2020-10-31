@@ -19,6 +19,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'frontend/vendor/css-hamburgers/hamburgers.min.css' %}">
     <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="{% static 'frontend/vendor/animsition/css/animsition.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/spinjs/spin.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/sweetalert2/sweetalert2.min.css' %}">
     <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="{% static 'frontend/css/util.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'frontend/css/main.css' %}">
@@ -36,14 +38,14 @@
                     
                     
                     <div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
-                        <input id="username" class="input100" type="text" name="username">
+                        <input id="username" class="input100" type="text" required="" name="username">
                         <span class="focus-input100"></span>
                         <span class="label-input100">Username</span>
                     </div>
                     
                     
                     <div class="wrap-input100 validate-input" data-validate="Password is required">
-                        <input id="password" class="input100" type="password" name="password">
+                        <input id="password" class="input100" type="password" required="" name="password">
                         <span class="focus-input100"></span>
                         <span class="label-input100">Password</span>
                     </div>
@@ -83,13 +85,19 @@
     <!--===============================================================================================-->
     <!--===============================================================================================-->
     <script src="{% static 'frontend/vendor/countdowntime/countdowntime.js' %}"></script>
+    <script src="{% static 'plugins/sweetalert2/sweetalert2.all.min.js' %}"></script>
+    <!--===============================================================================================-->
+    <script  src="{% static 'plugins/spinjs/spin.umd.js' %}"></script>
+    <script src="{% static 'custom.js' %}"></script>
     <!--===============================================================================================-->
     <script src="{% static 'frontend/js/main.js' %}"></script>
     <script>
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
+
     $("#form-login").submit(function(e) {
         e.preventDefault();
+        showSpinner();
         var username= $("#username").val();
         var password= $("#password").val();
 
@@ -107,7 +115,19 @@
                 return;
             }
 
+            Swal.fire({
+               title: 'Gagal !',
+               text: 'Periksa username atau password',
+               icon: 'warning',
+               showConfirmButton: false,
+               timer: 1000,
+           })
+
+
         })
+        .always(function() {
+            hideSpinner();
+        });
 
     });
     </script>

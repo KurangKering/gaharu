@@ -106,3 +106,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+*.csv
+gaharu/libraries/anfis_pytorch/test.py
+*.dat
+*.ipynb
+gaharu/libraries/test.py

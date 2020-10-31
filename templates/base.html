@@ -22,6 +22,9 @@
   <link rel="stylesheet" href="{% static "dist/css/adminlte.min.css" %}">
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="{% static "plugins/overlayScrollbars/css/OverlayScrollbars.min.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'plugins/spinjs/spin.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'plugins/sweetalert2/sweetalert2.min.css' %}">
+  
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   {% block css %}
@@ -193,6 +196,10 @@
   <script src="{% static "plugins/axios/axios.min.js" %}"></script>
   <script src="{% static "plugins/fancybox/jquery.fancybox.min.js" %}"></script>
   <script src="{% static "plugins/qs.js" %}"></script>
+  <script  src="{% static 'plugins/spinjs/spin.umd.js' %}"></script>
+  <script src="{% static 'plugins/sweetalert2/sweetalert2.all.min.js' %}"></script>
+
+  <script src="{% static 'custom.js' %}"></script>
 
   <script>
   axios.defaults.xsrfCookieName = 'csrftoken';
