@@ -214,7 +214,6 @@ img {
       }
 
       file = files[0];
-      console.log(file)
       filename = file.name;
       $("#namafile").text(file.name);
       if (URL) {
@@ -242,51 +241,64 @@ img {
   });
   var btnSubmit = $("#btn-submit");
   btnSubmit.click(function(event) {
-    if (!validateData()) {
-      alert('nonono');
-      return;
-    }
-    var overlayContent = overlaySelector.content.cloneNode(true);
-    $("#content-hasil").append(overlayContent);
-    if (cropper) {
-      canvas = cropper.getCroppedCanvas({
-        width: 200,
-        height: 300,
-      });
-      canvas.toBlob(function(blob) {
-        var reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = function() {
-          base64data = reader.result;
-          var kelas = $("input[name='input-kelas']:checked").val();
-          $.ajax({
-            headers: {'X-CSRFToken': csrftoken},
-            type: "POST",
-            dataType: "json",
-            url: "{% url 'gaharu/proses_tambah_data_master' %}",
-            data: {image: base64data, kelas:kelas},
-            beforeSend: function (xhr) {
-              xhr.overrideMimeType('text/plain; charset=x-user-defined');
-            },
-            success: function (result, textStatus, jqXHR) {
-              var response = jqXHR.responseJSON;
+   if (!validateData()) {
+     Swal.fire({
+       title: 'Gagal !',
+       text: 'Periksa kembali',
+       icon: 'warning',
+       showConfirmButton: false,
+       timer: 1000,
+     })
+     return;
+   }
+   showSpinner();
+   if (cropper) {
+    canvas = cropper.getCroppedCanvas({
+      width: 200,
+      height: 300,
+    });
+    canvas.toBlob(function(blob) {
+      var reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = function() {
+        base64data = reader.result;
+        var kelas = $("input[name='input-kelas']:checked").val();
+        $.ajax({
+          headers: {'X-CSRFToken': csrftoken},
+          type: "POST",
+          dataType: "json",
+          url: "{% url 'gaharu/proses_tambah_data_master' %}",
+          data: {image: base64data, kelas:kelas},
+          beforeSend: function (xhr) {
+            xhr.overrideMimeType('text/plain; charset=x-user-defined');
+          },
+          success: function (result, textStatus, jqXHR) {
+            var response = jqXHR.responseJSON;
 
-              $("#image-clean").attr("src", "data:image/png;base64,"+(response.image_clean));
-              $("#image-gray").attr("src", "data:image/png;base64,"+(response.image_gray));
-              $("#image-binary").attr("src", "data:image/png;base64,"+(response.image_binary));
+            $("#image-clean").attr("src", "data:image/png;base64,"+(response.image_clean));
+            $("#image-gray").attr("src", "data:image/png;base64,"+(response.image_gray));
+            $("#image-binary").attr("src", "data:image/png;base64,"+(response.image_binary));
 
-              cropper.destroy();
-              cropper = null;
+            cropper.destroy();
+            cropper = null;
 
-              $("#image").attr('src', "/static/images/empty-images.png");
-              filename = null;
+            $("#image").attr('src', "/static/images/empty-images.png");
+            filename = null;
 
-            },
-            error: function(xhr, textStatus, errorThrown){
-              alert("Error in getting document "+textStatus);
-            }
-          })
-          .done(function(result) {
+            Swal.fire({
+              title: 'Berhasil !',
+              text: 'Berhasil menambah data',
+              icon: 'success',
+              showConfirmButton: false,
+              timer: 1000,
+            })
+            return;
+          },
+          error: function(xhr, textStatus, errorThrown){
+            alert("Error in getting document "+textStatus);
+          }
+        })
+        .done(function(result) {
             // if (result.success == 1) {
             //   cropper.destroy();
             //   cropper = null;
@@ -296,13 +308,13 @@ img {
 
             // }
           })
-          .always(function() {
-            $("#content-hasil").find(".overlay").remove();
-          })
-        }
-      });
-    }
-  });
+        .always(function() {
+          hideSpinner();
+        })
+      }
+    });
+  }
+});
 
   $('.card-body').keypress(function (e) {
    var key = e.which;
@@ -315,9 +327,7 @@ img {
 
   function validateData() {
     var kelas = $("input[name='input-kelas']:checked").val();
-    console.log(kelas);
     var imgname = filename;
-    console.log(imgname);
 
     if (kelas == 'undefined' || kelas == null || kelas == "") {
       return false;

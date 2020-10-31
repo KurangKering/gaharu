@@ -13,7 +13,6 @@ from pprint import pprint
 from sklearn.model_selection import StratifiedKFold
 from itertools import islice, count
 import json
-from utils import pretty_request
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 import pickle
@@ -22,7 +21,8 @@ from os.path import join
 from django.conf import settings
 import csv
 import tempfile
-
+from utils.helper import get_second_value
+import pandas as pd
 
 def index(request):
     if not request.user.is_authenticated:
@@ -33,11 +33,9 @@ def index(request):
 def data_master(request):
     if not request.user.is_authenticated:
         return redirect("index")
-    datasets = Dataset.pdobjects.all()
-    kelass = [0, 1, 2, 3]
+    datasets = Dataset.objects.all()
     context = {
         "datasets": datasets,
-        "kelass": kelass
     }
     return render(request, 'gaharu/data-master.html', context)
 
@@ -282,7 +280,7 @@ def proses_pelatihan(request):
     persen_uji = float(request.POST.get('persen_uji')) if request.POST.get(
         'persen_uji') else float(20)
 
-    dataset = Dataset.pdobjects.all().to_dataframe()
+    dataset = pd.DataFrame(list(Dataset.objects.all().values()))
     columns = ['id', 'form_factor', 'aspect_ratio', 'rect',
                'narrow_factor', 'prd', 'plw', 'idm', 'entropy', 'asm', 'contrast',
                'correlation', 'kelas']
@@ -310,23 +308,24 @@ def proses_pelatihan(request):
     X_train_scaled_with_class = np.concatenate(
         (X_train_scaled, Y_train.to_numpy()), axis=1)
 
+    X_test_scaled_with_class = np.concatenate(
+        (X_test_scaled, Y_test.to_numpy()), axis=1)
+
     Y_test_reshape = Y_test.to_numpy().reshape(-1)
     engine = matlab.engine.find_matlab()[0]
     engine = matlab.engine.connect_matlab(engine)
     matlablibdir = join(settings.BASE_DIR, 'matlab')
     engine.cd(matlablibdir)
     am = AnfisMatlab(engine)
-    filename = str(uuid.uuid4()) + ".fis"
+    filename = str(uuid.uuid4())
     radii = 0.5
-    savefis = join(settings.MEDIA_ROOT, 'fis', filename)
+    savefis = join(settings.MEDIA_ROOT, 'fis', filename + ".fis")
     dirfis = am.make_fis(X_train_scaled, Y_train.to_numpy(), radii, savefis)
 
     am.mulai_pelatihan(X_train_scaled_with_class, dirfis, epoch, dirfis)
     predicted = am.mulai_pengujian(X_test_scaled, dirfis)
-    print(predicted)
     flat_predicted = np.concatenate(predicted)
     num_correct = int(np.sum(flat_predicted == Y_test_reshape))
-    print(num_correct)
 
     test_data = test_data.astype({"kelas": int})
     test_data['kelas_predicted'] = flat_predicted.reshape(-1, 1)
@@ -341,15 +340,17 @@ def proses_pelatihan(request):
         'model': dirfis,
         'train_data': train_data,
         'test_data': test_data,
+        'train_data_scaled':X_train_scaled_with_class,
+        'test_data_scaled':X_test_scaled_with_class,
         'train_data_ids': train_data_ids,
         'test_data_ids': test_data_ids,
         'epoch': epoch,
         'accuracy': accuracy,
         'num_correct': num_correct,
-        'scaler': scaler
+        'scaler':  scaler,
     }
 
-    dirwithfilename = join('models', filename)
+    dirwithfilename = join('models', filename + ".pkl")
     path = join(settings.MEDIA_ROOT, dirwithfilename)
 
 
@@ -380,6 +381,12 @@ def proses_pelatihan(request):
     train_data.insert(0, 'nomor', range(start_number, start_number + len(train_data)))
     test_data.insert(0, 'nomor', range(start_number, start_number + len(test_data)))
 
+    nilai_kelas = [x for x in list(zip(*Dataset.KELAS_CHOICES))[0]]
+    label_kelas = [x for x in list(zip(*Dataset.KELAS_CHOICES))[1]]
+
+    train_data['kelas'] = train_data['kelas'].replace(nilai_kelas, label_kelas)
+    test_data['kelas'] = test_data['kelas'].replace(nilai_kelas, label_kelas)
+    test_data['kelas_predicted'] = test_data['kelas_predicted'].replace(nilai_kelas, label_kelas)
 
     table_train = json.loads(train_data.to_json(orient="records"))
     table_test = json.loads(test_data.to_json(orient="records"))
@@ -409,11 +416,20 @@ def hapus_anfis(request):
         return redirect("index")
     model_id = int(request.POST.get('model_id'))
     model = Model.objects.get(id=model_id)
-    model.filename.delete()
+    try:
+        model_path = model.filename.path
+
+        with open(model_path, 'rb') as handle:
+            model_file = pickle.load(handle)
+
+        model_anfis = model_file['model']
+        os.remove(model_anfis)
+        model.filename.delete()
+    except Exception as e:
+        pass
+    
     model.delete()
 
-    # os.remove(path)
-    # model.delete()
     context = {
        'success': '1'
     }
@@ -459,7 +475,106 @@ def pengujian(request):
     return render(request, 'gaharu/pengujian.html', context)
 
 def proses_pengujian(request):
+    if not request.user.is_authenticated:
+        return redirect("index")
+    from gaharu.libraries.anfis_matlab import AnfisMatlab
+    import matlab
+    import matlab.engine
+
+    model_id = int(request.POST.get('model_id'))
+    image64 = request.POST.get('image')
+    formatt, imgstr = image64.split(';base64,')
+    ext = formatt.split('/')[-1]
+    filename = str(uuid.uuid4())
+    fileImg = ContentFile(base64.b64decode(imgstr), name=filename + "." + ext)
+    image = cv2.imdecode(np.fromstring(fileImg.read(), np.uint8), 1)
+
+    morfologi = Morfologi(image)
+    glcm = GLCM(image)
+
+    image_gray = morfologi.gray
+    image_binary = morfologi.cleaned.astype(int)*255
+
+    image_clean = base64.b64encode(cv2.imencode('.jpg', image)[1]).decode()
+    image_gray = base64.b64encode(cv2.imencode('.jpg', image_gray)[1]).decode()
+    image_binary = base64.b64encode(cv2.imencode('.jpg', image_binary)[1]).decode()
+
+    ROUNDING = 5
+    prd      =  round(morfologi.prd(), ROUNDING)
+    plw      =  round(morfologi.plw(), ROUNDING)
+    rect     =  round(morfologi.rect(), ROUNDING)
+    nf       =  round(morfologi.narrow_factor(), ROUNDING)
+    ar       =  round(morfologi.aspect_ratio(), ROUNDING)
+    ff       =  round(morfologi.form_factor(), ROUNDING)
+
+    idm      = round(glcm.idm(), ROUNDING)
+    entropy  = round(glcm.entropy(), ROUNDING)
+    asm      = round(glcm.asm(), ROUNDING)
+    contrast = round(glcm.contrast(), ROUNDING)
+    corr     = round(glcm.korelasi(), ROUNDING)
+
+    dataset = {}
+    dataset['form_factor'] = ff
+    dataset['aspect_ratio'] = ar
+    dataset['rect'] = rect
+    dataset['narrow_factor'] = nf
+    dataset['prd'] = prd
+    dataset['plw'] = plw
+    dataset['idm'] = idm
+    dataset['entropy'] = entropy
+    dataset['asm'] = asm
+    dataset['contrast'] = contrast
+    dataset['correlation'] = corr
+    print(dataset)
+    test_data = np.fromiter(dataset.values(), dtype=float).reshape(1,-1)
+
+    model = Model.objects.get(id=model_id)
+    model_path = model.filename.path
+
+    with open(model_path, 'rb') as handle:
+        model_file = pickle.load(handle)
+
+    scaler = model_file['scaler']
+    model_anfis = model_file['model'];
+    test_data_scaled = scaler.transform(test_data)
+    engine = matlab.engine.find_matlab()[0]
+    engine = matlab.engine.connect_matlab(engine)
+    matlablibdir = join(settings.BASE_DIR, 'matlab')
+    engine.cd(matlablibdir)
+    am = AnfisMatlab(engine)
+
+    predicted = am.mulai_pengujian(test_data_scaled, model_anfis)
+    predicted = (int(predicted))
+
+    variables = {
+        "prd": prd,
+        "plw": plw,
+        "rect": rect,
+        "nf": nf,
+        "ar": ar,
+        "ff": ff,
+        "idm": idm,
+        "entropy": entropy,
+        "asm": asm,
+        "contrast": contrast,
+        "corr": corr,
+    }
+
+    kelas_hasil = predicted
+    nilai_kelas = list(zip(*Dataset.KELAS_CHOICES))[0]
+    if (predicted in nilai_kelas):
+        kelas_hasil = get_second_value(Dataset.KELAS_CHOICES, predicted)
+
     response = {
-    'cdsfs':'sfsd'
+        'success': 1,
+        'predicted': predicted,
+        'fitur': json.dumps(dataset),
+        'fitur_scaled': list(test_data_scaled.reshape(-1)),
+        'variables': variables,
+        'image_clean': image_clean,
+        'image_gray': image_gray,
+        'image_binary': image_binary,
+        'kelas_hasil': kelas_hasil
+
     }
     return JsonResponse(response, safe=False)
