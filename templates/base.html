@@ -27,6 +27,37 @@
   
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title>Sistem Klasifikasi Gaharu</title>
+  <link rel="icon" type="image/x-icon" href="{% static 'grayscale/assets/img/favicon.ico' %}" />
+  <!-- Font Awesome icons (free version)-->
+  <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
+  <!-- Google fonts-->
+  <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
+  <!-- Core theme CSS (includes Bootstrap)-->
+  <link href="{% static 'plugins/iziModal-1.5.1/css/iziModal.min.css' %}" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" %}">
+  <link rel="stylesheet" href="{% static "plugins/datatables-responsive/css/responsive.bootstrap4.min.css" %}">
+  <link rel="stylesheet" href="{% static "plugins/datatables-select/css/select.bootstrap4.css" %}">
+  <link rel="stylesheet" href="{% static "plugins/datatables-buttons/css/buttons.bootstrap4.css" %}">
+  <link rel="stylesheet" href="{% static "plugins/cropperjs/dist/cropper.min.css" %}">
+  <link href="{% static 'grayscale/css/styles.css' %}" rel="stylesheet" />
+  <style>
+  .signup-section {
+    padding: 10rem 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.5) 75%, #000000 100%), url("{% static 'frontend/img/bg-upload.jpg' %}");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-size: cover;
+  }
+
+  
+  </style>
   {% block css %}
   {% endblock css %}
   <style>
@@ -44,7 +75,7 @@
   }
   </style>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed">
+<body class="hold-transition sidebar-mini layout-fixed" id="page-top">
   <div class="wrapper">
 
     <!-- Navbar -->
@@ -69,7 +100,7 @@
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <!-- Brand Logo -->
-      <a href="{% static "index3.html" %}" class="brand-link">
+      <a href=""class="brand-link">
         <img src="{% static "dist/img/logoo.png" %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
         style="opacity: .8">
         <span class="brand-text font-weight-light">Dash Admin</span>
@@ -78,14 +109,14 @@
       <!-- Sidebar -->
       <div class="sidebar">
         <!-- Sidebar user panel (optional) -->
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <!-- <div class="user-panel mt-3 pb-3 mb-3 d-flex">
           <div class="image">
             <img src="{% static "dist/img/avatar5.png" %}" class="img-circle elevation-2" alt="User Image">
           </div>
           <div class="info">
-            <a href="{% static "#" %}" class="d-block">User : {{ user.username }}</a>
+            <a href="" class="d-block">User : {{ user.username }}</a>
           </div>
-        </div>
+        </div> -->
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
@@ -102,7 +133,7 @@
               <a href="{% url 'gaharu/data_master' %}" class="nav-link ">
                 <i class="nav-icon fas fa-circle"></i>
                 <p>
-                  Data Master
+                  Datasets
                 </p>
               </a>
             </li>
@@ -111,7 +142,7 @@
               <a href="{% url 'gaharu/data_anfis' %}" class="nav-link ">
                 <i class="nav-icon fas fa-circle"></i>
                 <p>
-                  Data Anfis
+                  Data Model & Pelatihan
                 </p>
               </a>
             </li>
@@ -142,7 +173,9 @@
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
       {% block content %}
+
       {% endblock content %}
+
     </div>
     <!-- /.content-wrapper -->
     <footer class="main-footer">
