@@ -105,7 +105,7 @@ img {
                     <td>{{ train.asm }}</td>
                     <td>{{ train.contrast }}</td>
                     <td>{{ train.correlation }}</td>
-                    <td>{{ train.kelas|floatformat:"0" }}</td>
+                    <td>{{ train.kelas }}</td>
                   </tr>
                   {% endfor %}
                 </tbody>
@@ -158,8 +158,8 @@ img {
                     <td>{{ test.asm }}</td>
                     <td>{{ test.contrast }}</td>
                     <td>{{ test.correlation }}</td>
-                    <td>{{ test.kelas_predicted|floatformat:"0" }}</td>
-                    <td>{{ test.kelas|floatformat:"0" }}</td>
+                    <td>{{ test.kelas_predicted }}</td>
+                    <td>{{ test.kelas}}</td>
                   </tr>
                   {% endfor %}
                 </tbody>

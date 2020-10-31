@@ -107,7 +107,7 @@ def proses_tambah_data_master(request):
 def hapus_data(request):
     data_id = request.POST.get('data_id')
     print(data_id)
-    data = Dataset.pdobjects.get(id=data_id)
+    data = Dataset.objects.get(id=data_id)
     data.filename.delete()
     data.delete()
 
@@ -120,7 +120,7 @@ def hapus_data(request):
 
 def detail_gambar(request):
     id = int(request.POST.get('id'));
-    dataset = Dataset.pdobjects.get(id=id)
+    dataset = Dataset.objects.get(id=id)
     filepath = dataset.filename.path
     image = cv2.imread(filepath)
     R = image[:, :, 2]
@@ -151,7 +151,7 @@ def download_csv(request):
     tipe = request.GET.get("type")
     data_id = int(request.GET.get("id"))
 
-    dataset = Dataset.pdobjects.get(id=data_id)
+    dataset = Dataset.objects.get(id=data_id)
     filepath = dataset.filename.path
     image = cv2.imread(filepath)
 
@@ -354,8 +354,6 @@ def proses_pelatihan(request):
     path = join(settings.MEDIA_ROOT, dirwithfilename)
 
 
-    with open(path, 'wb') as handle:
-        pickle.dump(pickle_data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
     datalatih_ids = json.dumps(train_data_ids)
@@ -374,6 +372,10 @@ def proses_pelatihan(request):
     if (simpan == 1):
         save_model = Model(**model_to_database)
         save_model.save()
+
+        with open(path, 'wb') as handle:
+            pickle.dump(pickle_data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
     else:
         os.remove(dirfis)
 
@@ -449,9 +451,18 @@ def lihat_anfis(request, model_id):
     accuracy = model_file['accuracy']
     num_correct = model_file['num_correct']
 
+    nilai_kelas = [x for x in list(zip(*Dataset.KELAS_CHOICES))[0]]
+    label_kelas = [x for x in list(zip(*Dataset.KELAS_CHOICES))[1]]
+    train_data['kelas'] = train_data['kelas'].replace(nilai_kelas, label_kelas)
+    test_data['kelas'] = test_data['kelas'].replace(nilai_kelas, label_kelas)
+    test_data['kelas_predicted'] = test_data['kelas_predicted'].replace(nilai_kelas, label_kelas)
+
     table_train = json.loads(train_data.to_json(orient="records"))
     table_test = json.loads(test_data.to_json(orient="records"))
     total_data_test = len(test_data)
+
+
+
     context = {
         "model_id": model_id,
         "table_train": table_train,
