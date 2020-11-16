@@ -112,31 +112,29 @@ img {
               <!-- /.card-header -->
               <div class="card-body">
 
-                <div class="table-responsive">
-                  <table class="table table-striped" id="table-data-latih">
-                    <thead>
-                      <tr>
-                        <th>NO</th>
-                        <th>ASM</th>
-                        <th>CONTRAST</th>
-                        <th>IDM</th>
-                        <th>ENTROPY</th>
-                        <th>CORRELATION</th>
-                        <th>ASPECT_RATIO</th>
-                        <th>FORM_FACTOR</th>
-                        <th>RECT</th>
-                        <th>NARROW_FACTOR</th>
-                        <th>PRD</th>
-                        <th>PLW</th>
-                        <th>KELAS</th>
-                      </tr>
-                    </thead>
-                    <tbody>
+                <table class="table table-striped" id="table-data-latih">
+                  <thead>
+                    <tr>
+                      <th>NO</th>
+                      <th>ASM</th>
+                      <th>CONTRAST</th>
+                      <th>IDM</th>
+                      <th>ENTROPY</th>
+                      <th>CORRELATION</th>
+                      <th>ASPECT_RATIO</th>
+                      <th>FORM_FACTOR</th>
+                      <th>RECT</th>
+                      <th>NARROW_FACTOR</th>
+                      <th>PRD</th>
+                      <th>PLW</th>
+                      <th>KELAS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
 
-                    </tbody>
+                  </tbody>
 
-                  </table>
-                </div>
+                </table>
 
               </div>
               <!-- /.card-body -->
@@ -151,29 +149,27 @@ img {
               <!-- /.card-header -->
               <div class="card-body">
 
-                <div class="table-responsive">
-                  <table class="table table-striped" id="table-data-uji">
-                    <thead>
-                      <tr>
-                        <th>NO</th>
-                        <th>ASM</th>
-                        <th>CONTRAST</th>
-                        <th>IDM</th>
-                        <th>ENTROPY</th>
-                        <th>CORRELATION</th>
-                        <th>ASPECT_RATIO</th>
-                        <th>FORM_FACTOR</th>
-                        <th>RECT</th>
-                        <th>NARROW_FACTOR</th>
-                        <th>PRD</th>
-                        <th>PLW</th>
-                        <th>KELAS</th>
-                        <th>Kelas Prediksi</th>
-                      </tr>
-                    </thead>
+                <table class="table table-striped" id="table-data-uji">
+                  <thead>
+                    <tr>
+                      <th>NO</th>
+                      <th>ASM</th>
+                      <th>CONTRAST</th>
+                      <th>IDM</th>
+                      <th>ENTROPY</th>
+                      <th>CORRELATION</th>
+                      <th>ASPECT_RATIO</th>
+                      <th>FORM_FACTOR</th>
+                      <th>RECT</th>
+                      <th>NARROW_FACTOR</th>
+                      <th>PRD</th>
+                      <th>PLW</th>
+                      <th>KELAS</th>
+                      <th>Kelas Prediksi</th>
+                    </tr>
+                  </thead>
 
-                  </table>
-                </div>
+                </table>
 
               </div>
               <!-- /.card-body -->
@@ -208,6 +204,7 @@ img {
   <script>
 
   var tableDataLatih = $("#table-data-latih").DataTable({
+    "scrollX": true,
     "columns": [
     { "data": "nomor" },
     { "data": "asm" },
@@ -228,6 +225,7 @@ img {
     order : [],
   });
   var tableDataUji = $("#table-data-uji").DataTable({
+    "scrollX": true,
     "columns": [
     { "data": "nomor" },
     { "data": "asm" },

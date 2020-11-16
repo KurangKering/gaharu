@@ -3,8 +3,7 @@ from django.http import JsonResponse, Http404
 from .models import Dataset, Model
 from django.core.files.base import ContentFile
 import base64
-from .libraries.glcm import GLCM
-from .libraries.feature import Morfologi
+from .libraries.feature_extraction_factory import FeatureExtractionFactory
 import uuid
 import numpy as np
 import cv2
@@ -54,7 +53,8 @@ def proses_tambah_data_master(request):
     fileImg = ContentFile(base64.b64decode(imgstr), name=filename + "." + ext)
     image = cv2.imdecode(np.fromstring(fileImg.read(), np.uint8), 1)
 
-    morfologi = Morfologi(image)
+    factory = FeatureExtractionFactory()
+    morfologi = factory.make_morfologi(image)
     image_gray = morfologi.gray
     image_binary = morfologi.cleaned.astype(int)*255
 
@@ -62,21 +62,21 @@ def proses_tambah_data_master(request):
     image_gray = base64.b64encode(cv2.imencode('.jpg', image_gray)[1]).decode()
     image_binary = base64.b64encode(cv2.imencode('.jpg', image_binary)[1]).decode()
 
-    glcm = GLCM(image)
+    glcm = factory.make_glcm(image)
 
-    ROUNDING = 5
-    prd      =  round(morfologi.prd(), ROUNDING)
-    plw      =  round(morfologi.plw(), ROUNDING)
-    rect     =  round(morfologi.rect(), ROUNDING)
-    nf       =  round(morfologi.narrow_factor(), ROUNDING)
-    ar       =  round(morfologi.aspect_ratio(), ROUNDING)
-    ff       =  round(morfologi.form_factor(), ROUNDING)
 
-    idm      = round(glcm.idm(), ROUNDING)
-    entropy  = round(glcm.entropy(), ROUNDING)
-    asm      = round(glcm.asm(), ROUNDING)
-    contrast = round(glcm.contrast(), ROUNDING)
-    corr     = round(glcm.korelasi(), ROUNDING)
+    prd      =  morfologi.get_prd()
+    plw      =  morfologi.get_plw()
+    rect     =  morfologi.get_rect()
+    nf       =  morfologi.get_narrow_factor()
+    ar       =  morfologi.get_aspect_ratio()
+    ff       =  morfologi.get_form_factor()
+
+    idm      = glcm.get_idm()
+    entropy  = glcm.get_entropy()
+    asm      = glcm.get_asm()
+    contrast = glcm.get_contrast()
+    corr     = glcm.get_korelasi()
 
     dataset = Dataset()
     dataset.filename = fileImg
@@ -127,7 +127,8 @@ def detail_gambar(request):
     G = image[:, :, 1]
     B = image[:, :, 0]
 
-    morfologi = Morfologi(image)
+    factory = FeatureExtractionFactory()
+    morfologi = factory.make_morfologi(image)
 
     image_gray = morfologi.gray
     image_binary = morfologi.cleaned.astype(int)*255
@@ -159,7 +160,8 @@ def download_csv(request):
     G = image[:, :, 1]
     B = image[:, :, 0]
 
-    morfologi = Morfologi(image)
+    factory = FeatureExtractionFactory()
+    morfologi = factory.make_morfologi(image)
 
     image_gray = morfologi.gray
     image_binary = morfologi.cleaned.astype(int)*255
@@ -206,44 +208,6 @@ def download_csv(request):
     raise Http404
 
 
-def proses_input(request):
-    if not request.user.is_authenticated:
-        return redirect("index")
-    QueryDict = request.POST
-    image64 = QueryDict.get('image')
-    kelas = QueryDict.get('kelas')
-    formatt, imgstr = image64.split(';base64,')
-    ext = formatt.split('/')[-1]
-    filename = str(uuid.uuid4())
-    fileImg = ContentFile(base64.b64decode(imgstr), name=filename + "." + ext)
-    image = cv2.imdecode(np.fromstring(fileImg.read(), np.uint8), 1)
-
-    feature = Morfologi(image)
-    glcm = GLCM(image)
-
-    dataset = Dataset()
-    dataset.filename = fileImg
-    dataset.form_factor = feature.form_factor()
-    dataset.aspect_ratio = feature.aspect_ratio()
-    dataset.rect = feature.rect()
-    dataset.narrow_factor = feature.narrow_factor()
-    dataset.prd = feature.prd()
-    dataset.plw = feature.plw()
-    dataset.idm = glcm.idm()
-    dataset.entropy = glcm.entropy()
-    dataset.asm = glcm.asm()
-    dataset.contrast = glcm.contrast()
-    dataset.correlation = glcm.korelasi()
-    dataset.kelas = kelas
-    dataset.is_extracted = 1
-    dataset.save()
-
-    response = {
-        'success': 1,
-    }
-    return JsonResponse(response, safe=False)
-
-
 def data_ekstraksi(request):
     if not request.user.is_authenticated:
         return redirect("index")
@@ -255,7 +219,7 @@ def data_anfis(request):
     if not request.user.is_authenticated:
         return redirect("index")
     models = Model.objects.all()
-    
+
     context = {
         'models': models
     }
@@ -330,7 +294,7 @@ def proses_pelatihan(request):
     test_data = test_data.astype({"kelas": int})
     test_data['kelas_predicted'] = flat_predicted.reshape(-1, 1)
 
-   
+
     accuracy = float((num_correct / Y_test.count()) * 100)
 
     train_data_ids = train_data['id'].tolist()
@@ -429,7 +393,7 @@ def hapus_anfis(request):
         model.filename.delete()
     except Exception as e:
         pass
-    
+
     model.delete()
 
     context = {
@@ -500,9 +464,8 @@ def proses_pengujian(request):
     fileImg = ContentFile(base64.b64decode(imgstr), name=filename + "." + ext)
     image = cv2.imdecode(np.fromstring(fileImg.read(), np.uint8), 1)
 
-    morfologi = Morfologi(image)
-    glcm = GLCM(image)
-
+    factory = FeatureExtractionFactory()
+    morfologi = factory.make_morfologi(image)
     image_gray = morfologi.gray
     image_binary = morfologi.cleaned.astype(int)*255
 
@@ -510,19 +473,21 @@ def proses_pengujian(request):
     image_gray = base64.b64encode(cv2.imencode('.jpg', image_gray)[1]).decode()
     image_binary = base64.b64encode(cv2.imencode('.jpg', image_binary)[1]).decode()
 
-    ROUNDING = 5
-    prd      =  round(morfologi.prd(), ROUNDING)
-    plw      =  round(morfologi.plw(), ROUNDING)
-    rect     =  round(morfologi.rect(), ROUNDING)
-    nf       =  round(morfologi.narrow_factor(), ROUNDING)
-    ar       =  round(morfologi.aspect_ratio(), ROUNDING)
-    ff       =  round(morfologi.form_factor(), ROUNDING)
+    glcm = factory.make_glcm(image)
 
-    idm      = round(glcm.idm(), ROUNDING)
-    entropy  = round(glcm.entropy(), ROUNDING)
-    asm      = round(glcm.asm(), ROUNDING)
-    contrast = round(glcm.contrast(), ROUNDING)
-    corr     = round(glcm.korelasi(), ROUNDING)
+
+    prd      =  morfologi.get_prd()
+    plw      =  morfologi.get_plw()
+    rect     =  morfologi.get_rect()
+    nf       =  morfologi.get_narrow_factor()
+    ar       =  morfologi.get_aspect_ratio()
+    ff       =  morfologi.get_form_factor()
+
+    idm      = glcm.get_idm()
+    entropy  = glcm.get_entropy()
+    asm      = glcm.get_asm()
+    contrast = glcm.get_contrast()
+    corr     = glcm.get_korelasi()
 
     dataset = {}
     dataset['form_factor'] = ff

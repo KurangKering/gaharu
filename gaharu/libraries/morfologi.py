@@ -46,7 +46,7 @@ def imcomplement(matrix):
 
 def morphology(img):
     """
-    proses morfologi: 
+    proses morfologi:
     img: gray
     """
     RADIUS = 4
@@ -59,10 +59,11 @@ def morphology(img):
     return cleaned
 
 
+
 class Morfologi:
-    def __init__(self, img):
+    def __init__(self, img, ROUNDING = 4):
         """
-        img: image path-> string
+        img: image array-> numpy
         """
         self.img = img
         self.gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
@@ -79,48 +80,22 @@ class Morfologi:
         self.r = self.img[:, :, 2]
         self.g = self.img[:, :, 1]
         self.b = self.img[:, :, 0]
+        self.ROUNDING = ROUNDING
 
-        # filename, ext = os.path.splitext(img)
-        # filename_gray = filename+"-gray"+ext
-        # filename_bin = filename+"-bin"+ext
-        # filename_cleaned = filename+"-cleaned"+ext
+    def get_form_factor(self):
+        return round((4 * np.pi * self.area)/(self.perimeter**2), self.ROUNDING)
 
-        # im = Image.fromarray(self.gray)
-        # im = im.convert("L")
+    def get_aspect_ratio(self):
+        return round(self.length/self.width, self.ROUNDING)
 
-        # im.save(filename_gray)
-        # imsave(filename_bin, self.binary)
-        # imsave(filename_cleaned, self.cleaned.astype(int))
+    def get_rect(self):
+        return round((self.length*self.width)/self.area, self.ROUNDING)
 
-    def form_factor(self):
-        return (4 * np.pi * self.area)/(self.perimeter**2)
+    def get_narrow_factor(self):
+        return round(self.diameter/self.length, self.ROUNDING)
 
-    def aspect_ratio(self):
-        return self.length/self.width
+    def get_prd(self):
+        return round(self.perimeter/self.diameter, self.ROUNDING)
 
-    def rect(self):
-        return (self.length*self.width)/self.area
-
-    def narrow_factor(self):
-        return self.diameter/self.length
-
-    def prd(self):
-        return self.perimeter/self.diameter
-
-    def plw(self):
-        return self.perimeter/(self.length+self.width)
-
-
-if __name__ == '__main__':
-    from skimage.io import imread
-    import sys
-    filename = sys.argv[1]
-    morf = Morfologi(filename)
-    print("python", "\t", "\t", )
-    print("===============")
-    print("prd\t", morf.prd())
-    print("plw\t", morf.plw())
-    print("rect\t", morf.rect())
-    print("narrow factor\t", morf.narrow_factor())
-    print("aspect ratio\t", morf.aspect_ratio())
-    print("form factor\t", morf.form_factor())
+    def get_plw(self):
+        return round(self.perimeter/(self.length+self.width), self.ROUNDING)

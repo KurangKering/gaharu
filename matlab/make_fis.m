@@ -1,6 +1,8 @@
 function dirfis = make_fis(X, y, radii, dirsave)
 dirfis = '';
-fismat = genfis2(X,y,radii);
+options = genfisOptions('SubtractiveClustering');
+options.AcceptRatio = radii;
+fismat = genfis(X,y,options);
 if exist('dirsave', 'var') && ~isempty(dirsave)
     writefis(fismat, dirsave);
     dirfis = dirsave;

@@ -242,7 +242,6 @@ img {
     </div>
   </div>
 </div>
-{% csrf_token %}
 {% endblock content %}
 {% block export-js %}
 <!-- DataTables -->
@@ -257,101 +256,61 @@ img {
 {% block js %}
 <script>
 var events = $('#events');
-var model_id = null;
-var tableModelAnfis = $("#table-model-anfis").DataTable({
-  select: 'single',
-});
-tableModelAnfis.on( 'select', function ( e, dt, type, indexes ) {
-  if ( type === 'row' ) {
-    model_id = $(tableModelAnfis.rows( indexes ).nodes()).data("modelId");
-    
-  }
-} );
-tableModelAnfis.on( 'deselect', function ( e, dt, type, indexes ) {
-  model_id = null;
-} );
+var objModelId = {model_id: null};
 var $inputImg = $("input[name='input-image']");
 var image = $("#image");
 var filename;
-var fileHard;
 var cropper;
-const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-$inputImg.change(function(e) {
-  resetValues();
-  var files = e.target.files;
-  var done = function (url) {
-    image.attr('src',url);
-  };
-  var reader;
-  var url;
-  if (files && files.length > 0) {
 
-   if (cropper) {
-    cropper.destroy();
-    cropper = null;
-  }
-  fileHard = files[0];
-  if (URL) {
-    done(URL.createObjectURL(fileHard));
-  } else if (FileReader) {
-    reader = new FileReader();
-    reader.onload = function (e) {
-      done(reader.result);
-    };
-    reader.readAsDataURL(fileHard);
-  }
-  cropper = new Cropper(image[0], {
-    strict: true,
-    viewMode: 2,
-    cropBoxResizable: false,
-    aspectRatio: 2/3,
-    autoCropArea: 0.7,
-    cropBoxMovable: true,
-    dragMode: 'none',
-    center: true,
-    zoomOnWheel: false,
-  });
+setModelTableSelector('#table-model-anfis', objModelId);
 
-} else {
-  fileHard = null;
-  if (cropper) {
-    cropper.destroy();
-    cropper = null;
-  }
-}
-});
-var btnMulaiPengujian = $("#btn-mulai-pengujian");
-btnMulaiPengujian.click(function(event) {
-  if (!validateData()) {
-    Swal.fire({
-     title: 'Gagal !',
-     text: 'Periksa kembali',
-     icon: 'warning',
-     showConfirmButton: false,
-     timer: 1000,
-   })
-    return;
-  }
-  showSpinner();
-  
 
-  model_id = model_id;
-  if (cropper) {
-    canvas = cropper.getCroppedCanvas({
-      width: 200,
-      height: 300,
+actionsOnReadImage = {
+  fileHard : null,
+
+  failedValidate: function() {
+    this.fileHard = null;
+    if (cropper) {
+      cropper.destroy();
+      cropper = null;
+    }
+  },
+  successValidate: function() {
+    $("#modal-large").iziModal("open");
+    if (cropper) {
+      cropper.destroy();
+      cropper = null;
+    }
+  },
+  finished: function() {
+    cropper = new Cropper(image[0], {
+      strict: true,
+      viewMode: 2,
+      cropBoxResizable: false,
+      aspectRatio: 2 / 3,
+      autoCropArea: 0.7,
+      cropBoxMovable: true,
+      dragMode: 'none',
+      center: true,
+      zoomOnWheel: false,
     });
+  },
+};
+
+var actionsOnSendCroppedImage = {
+  element: null,
+  startSend: function(canvas) {
     canvas.toBlob(function(blob) {
       var reader = new FileReader();
       reader.readAsDataURL(blob);
       reader.onloadend = function() {
         var base64data = reader.result;
         $.ajax({
-          headers: {'X-CSRFToken': csrftoken},
+          headers: {'X-CSRFToken': csrftoken.value},
           type: "POST",
           dataType: "json",
           url: "{% url 'gaharu/proses_pengujian' %}",
-          data: {image: base64data, model_id:model_id},
+          data: {image: base64data, model_id:objModelId.model_id},
           beforeSend: function(){
           }
         })
@@ -377,10 +336,30 @@ btnMulaiPengujian.click(function(event) {
         })
         .always(function() {
           hideSpinner();
-
         })
       }
     });
+  }
+};
+
+
+$inputImg.change(function(e) {
+  resetValues();
+
+  actionsOnReadImage.event = e;
+  readImageFromInput(actionsOnReadImage);
+
+});
+var btnMulaiPengujian = $("#btn-mulai-pengujian");
+btnMulaiPengujian.click(function(event) {
+  if (!validateNoNullVar(objModelId.model_id, actionsOnReadImage.fileHard)) {
+    swalFireGagal();
+    return;
+  }
+  showSpinner();
+  if (cropper) {
+    actionsOnSendCroppedImage.element = cropper;
+    sendCroppedImageToServer(actionsOnSendCroppedImage);
   }
 });
 
@@ -404,15 +383,5 @@ function resetValues() {
   $("#corr").text("");
 }
 
-function validateData() {
-  if (model_id == "")
-    return false;
-  if (model_id == null)
-    return false;
-  if (fileHard == null)
-    return false;
-
-  return true;
-}
 </script>
 {% endblock js %}

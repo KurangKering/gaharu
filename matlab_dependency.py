@@ -28,6 +28,11 @@ def is_matlab_engine_running():
 
     return index_engine
 
+def remove_temp_session():
+    filename = os.path.join(settings.TEMP_DIR, engine_name)
+    if (os.path.isfile(filename)):
+        os.remove(filename)
+
 def run_matlab():
     import subprocess
 
@@ -36,6 +41,7 @@ def run_matlab():
 
 def main():
     try:
+        remove_temp_session()
         is_matlab_exist()
         is_matlab_engine_exist()
         if (is_matlab_engine_running() is False):
