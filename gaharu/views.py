@@ -255,6 +255,7 @@ def proses_pelatihan(request):
     train_df = train_df.sort_index()
     test_df = test_df.sort_index()
 
+
     train_data = train_df.copy()
     test_data = test_df.copy()
 
@@ -352,7 +353,17 @@ def proses_pelatihan(request):
 
     train_data['kelas'] = train_data['kelas'].replace(nilai_kelas, label_kelas)
     test_data['kelas'] = test_data['kelas'].replace(nilai_kelas, label_kelas)
-    test_data['kelas_predicted'] = test_data['kelas_predicted'].replace(nilai_kelas, label_kelas)
+    test_data['kelas_predicted'] = test_data['kelas_predicted'].astype(int)
+
+    for index, value in test_data['kelas_predicted'].items():
+        if 0 <= value < len(label_kelas):
+            test_data['kelas_predicted'][index] = "({}) {}".format(value, label_kelas[value])
+        else:
+            test_data['kelas_predicted'][index] =  value
+
+    test_data['kelas_predicted'] = test_data['kelas_predicted'].astype(str)
+
+
 
     table_train = json.loads(train_data.to_json(orient="records"))
     table_test = json.loads(test_data.to_json(orient="records"))
