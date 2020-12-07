@@ -128,6 +128,6 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-MATLAB_EXE = r"D:\MATLABB\bin\matlab.exe"
-RUN_MATLAB = 1
+MATLAB_EXE = r"E:\MATLAB\r2017b\bin\matlab.exe"
+RUN_MATLAB = 0
 print("base dir path {}".format(BASE_DIR))

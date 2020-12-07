@@ -4,7 +4,7 @@ import sys
 from django.conf import settings
 import importlib.util
 
-engine_name = 'ANFIS_MATLAB'
+engine_name = ''ANFIS_MATLAB''
 
 def is_matlab_exist():
     if (os.path.isfile(settings.MATLAB_EXE) is False):
