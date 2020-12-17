@@ -3,7 +3,7 @@ import os.path
 import sys
 from django.conf import settings
 import importlib.util
-
+import psutil
 engine_name = 'ANFIS_MATLAB'
 
 def is_matlab_exist():
@@ -18,6 +18,9 @@ def is_matlab_engine_exist():
     if (matlab_package is None or matlab_engine_package is None):
         raise Exception("matlab engine is not installed.")
 
+def is_matlab_running():
+    running = 'MATLAB.exe' in (p.name() for p in psutil.process_iter())
+    return running
 
 def is_matlab_engine_running():
     import matlab.engine
@@ -41,10 +44,11 @@ def run_matlab():
 
 def main():
     try:
-        remove_temp_session()
         is_matlab_exist()
         is_matlab_engine_exist()
-        if (is_matlab_engine_running() is False):
+        if (is_matlab_engine_running() is False and is_matlab_running() is False):
+            remove_temp_session()
             run_matlab()
     except Exception as e:
         raise e
+
