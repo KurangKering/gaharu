@@ -6,11 +6,11 @@ class AnfisMatlab():
 		self.matengine = matengine
 
 
-	def make_fis(self, data_no_label, only_label, radii, dirsave):
+	def create_fis(self, data_no_label, only_label, radii, dirsave):
 		data_no_label = matlab.double(data_no_label.tolist())
 		only_label = matlab.double(only_label.tolist())
 		radii = float(radii)
-		dirfis = self.matengine.make_fis(data_no_label, only_label, radii, dirsave, nargout=1)
+		dirfis = self.matengine.create_fis(data_no_label, only_label, radii, dirsave, nargout=1)
 		return dirfis
 
 

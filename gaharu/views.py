@@ -285,7 +285,7 @@ def proses_pelatihan(request):
     filename = str(uuid.uuid4())
     radii = 0.5
     savefis = join(settings.MEDIA_ROOT, 'fis', filename + ".fis")
-    dirfis = am.make_fis(X_train_scaled, Y_train.to_numpy(), radii, savefis)
+    dirfis = am.create_fis(X_train_scaled, Y_train.to_numpy(), radii, savefis)
 
     am.mulai_pelatihan(X_train_scaled_with_class, dirfis, epoch, dirfis)
     predicted = am.mulai_pengujian(X_test_scaled, dirfis)

@@ -1,4 +1,4 @@
-function dirfis = make_fis(X, y, radii, dirsave)
+function dirfis = create_fis(X, y, radii, dirsave)
 dirfis = '';
 options = genfisOptions('SubtractiveClustering');
 options.AcceptRatio = radii;
