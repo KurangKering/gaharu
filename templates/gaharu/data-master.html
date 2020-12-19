@@ -50,52 +50,50 @@ img {
           </div>
           <!-- /.card-header -->
           <div class="card-body">
-            <div class="table-responsive">
-              <table id="table-data-master" class="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <th>NO</th>
-                    <th>GAMBAR</th>
-                    <th>ASM</th>
-                    <th>CONTRAST</th>
-                    <th>IDM</th>
-                    <th>ENTROPY</th>
-                    <th>CORRELATION</th>
-                    <th>ASPECT_RATIO</th>
-                    <th>FORM_FACTOR</th>
-                    <th>RECT</th>
-                    <th>NARROW_FACTOR</th>
-                    <th>PRD</th>
-                    <th>PLW</th>
-                    <th>KELAS</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for dataset in datasets %}
-                  <tr data-model-id="{{ dataset.id }}">
-                    <td>{{ forloop.counter }}</td>
-                    <td><img  class="image-data"  src="{{   dataset.filename.url  }}" alt=""></td>
-                    <td>{{ dataset.asm }}</td>
-                    <td>{{ dataset.contrast }}</td>
-                    <td>{{ dataset.idm }}</td>
-                    <td>{{ dataset.entropy }}</td>
-                    <td>{{ dataset.correlation }}</td>
-                    <td>{{ dataset.aspect_ratio }}</td>
-                    <td>{{ dataset.form_factor }}</td>
-                    <td>{{ dataset.rect }}</td>
-                    <td>{{ dataset.narrow_factor }}</td>
-                    <td>{{ dataset.prd }}</td>
-                    <td>{{ dataset.plw }}</td>
-                    <td>{{ dataset.get_kelas_display }}</td>
-                    <td>
-                      <button class="btn btn-danger" type="button" onclick="deleteData({{ dataset.id }})">Hapus</button>
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
+            <table id="table-data-master" class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>NO</th>
+                  <th>GAMBAR</th>
+                  <th>ASM</th>
+                  <th>CONTRAST</th>
+                  <th>IDM</th>
+                  <th>ENTROPY</th>
+                  <th>CORRELATION</th>
+                  <th>ASPECT_RATIO</th>
+                  <th>FORM_FACTOR</th>
+                  <th>RECT</th>
+                  <th>NARROW_FACTOR</th>
+                  <th>PRD</th>
+                  <th>PLW</th>
+                  <th>KELAS</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for dataset in datasets %}
+                <tr data-model-id="{{ dataset.id }}">
+                  <td>{{ forloop.counter }}</td>
+                  <td><img  class="image-data"  src="{{   dataset.filename.url  }}" alt=""></td>
+                  <td>{{ dataset.asm }}</td>
+                  <td>{{ dataset.contrast }}</td>
+                  <td>{{ dataset.idm }}</td>
+                  <td>{{ dataset.entropy }}</td>
+                  <td>{{ dataset.correlation }}</td>
+                  <td>{{ dataset.aspect_ratio }}</td>
+                  <td>{{ dataset.form_factor }}</td>
+                  <td>{{ dataset.rect }}</td>
+                  <td>{{ dataset.narrow_factor }}</td>
+                  <td>{{ dataset.prd }}</td>
+                  <td>{{ dataset.plw }}</td>
+                  <td>{{ dataset.get_kelas_display }}</td>
+                  <td>
+                    <button class="btn btn-danger" type="button" onclick="deleteData({{ dataset.id }})">Hapus</button>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
           </div>
           <!-- /.card-body -->
         </div>
@@ -242,10 +240,7 @@ var $inputKelas = $("input[name='input-kelas']");
 var image = $("#image");
 var filename;
 var cropper;
-const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-var overlayEl = document.querySelector("#overlay");
-var overlayTemplate = overlayEl.content.cloneNode(true);
 var detail_id
 
 
@@ -288,95 +283,20 @@ $("#modal-large").iziModal({
 $("#modal-large").iziModal('setZindex', 99999);
 
 
-$("#table-data-master").DataTable();
+$("#table-data-master").DataTable({
+  "scrollX": true,
+});
 
 $btnShowModal.click(function() {
   $modalUpload.modal("show");
 });
 
-$inputImg.change(function(e) {
-  if (cropper) {
-    cropper.destroy();
-    cropper = null;
-  }
-  var files = e.target.files;
-  var done = function (url) {
-    image.attr('src',url);
-  };
-  var reader;
-  var file;
-  var url;
-
-  if (files && files.length > 0) {
-    file = files[0];
-    console.log(file)
-    if (URL) {
-      done(URL.createObjectURL(file));
-    } else if (FileReader) {
-      reader = new FileReader();
-      reader.onload = function (e) {
-        done(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-    cropper = new Cropper(image[0], {
-      aspectRatio: 2/3,
-      viewMode: 3,
-      autoCropArea: 1,
-      center: true,
-      restore: false,
-      zoomOnWheel: false
-      // preview: '.preview'
-    });
-  }
-});
 
 
-$("#form-upload").submit(function(event) {
-  event.preventDefault();
-  var kelas = $("#input-kelas").val();
-
-  canvas = cropper.getCroppedCanvas({
-    width: 200,
-    height: 300,
-  });
-  canvas.toBlob(function(blob) {
-    url = URL.createObjectURL(blob);
-    var reader = new FileReader();
-    reader.readAsDataURL(blob);
-    reader.onloadend = function() {
-      var base64data = reader.result;
-
-      $.ajax({
-        headers: {'X-CSRFToken': csrftoken},
-        type: "POST",
-        dataType: "json",
-        url: "{% url 'gaharu/proses_input' %}",
-        data: {image: base64data, kelas: kelas},
-        beforeSend: function(){
-         $("#card").append(overlayTemplate);
-       }
-     })
-      .done(function(result) {
-        if (result.success == 1) {
-
-          window.location.reload(false);
-        }
-      })
-      .always(function() {
-
-        $("#card").find(".overlay").remove();
-      })
-
-
-
-    }
-  });
-});
 
 function deleteData(id) {
  $.ajax({
-  headers: {'X-CSRFToken': csrftoken},
+  headers: {'X-CSRFToken': csrftoken.value},
   type: "POST",
   dataType: "json",
   url: "{% url 'gaharu/hapus_data' %}",
@@ -405,7 +325,7 @@ $('#table-data-master').on('click','.image-data',function () {
   var id = $(this).closest("tr").data("modelId");
   detail_id = id;
   $.ajax({
-    headers: {'X-CSRFToken': csrftoken},
+    headers: {'X-CSRFToken': csrftoken.value},
     type: "POST",
     dataType: "json",
     url: "{% url 'gaharu/detail_gambar' %}",

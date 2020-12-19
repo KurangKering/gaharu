@@ -10,7 +10,6 @@ urlpatterns = [
     path('hapus_data/', views.hapus_data, name='gaharu/hapus_data'),
     path('detail_gambar/', views.detail_gambar, name='gaharu/detail_gambar'),
     path('download_csv/', views.download_csv, name='gaharu/download_csv'),
-    path('proses_input/', views.proses_input, name='gaharu/proses_input'),
     path('data_anfis/', views.data_anfis, name='gaharu/data_anfis'),
     path('tambah_model/', views.tambah_model, name='gaharu/tambah_model'),
     path('proses_pelatihan/', views.proses_pelatihan, name='gaharu/proses_pelatihan'),

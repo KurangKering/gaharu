@@ -92,7 +92,7 @@
     <!--===============================================================================================-->
     <script src="{% static 'frontend/js/main.js' %}"></script>
     <script>
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]');
 
 
     $("#form-login").submit(function(e) {
@@ -102,7 +102,7 @@
         var password= $("#password").val();
 
         $.ajax({
-            headers: {'X-CSRFToken': csrftoken},
+            headers: {'X-CSRFToken': csrftoken.value},
             type: "POST",
             dataType: "json",
             url: "{% url 'process_login' %}",
@@ -114,16 +114,7 @@
                 window.location.href="{% url 'gaharu/index' %}"
                 return;
             }
-
-            Swal.fire({
-               title: 'Gagal !',
-               text: 'Periksa username atau password',
-               icon: 'warning',
-               showConfirmButton: false,
-               timer: 1000,
-           })
-
-
+            swalFireGagal({text: 'Periksa username atau password!!!'});
         })
         .always(function() {
             hideSpinner();
@@ -132,4 +123,4 @@
     });
     </script>
 </body>
-</html>    
+</html>

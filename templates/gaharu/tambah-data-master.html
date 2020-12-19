@@ -113,7 +113,6 @@ img {
 
             </div>
             <div class="card-footer">
-              {% csrf_token %}
               <button type="button" id="btn-submit"  class="btn btn-info float-right">Submit</button>
             </div>
           </div>
@@ -195,7 +194,6 @@ img {
   var image = $("#image");
   var filename;
   var cropper;
-  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
   $inputImg.change(function(e) {
 
@@ -264,7 +262,7 @@ img {
         base64data = reader.result;
         var kelas = $("input[name='input-kelas']:checked").val();
         $.ajax({
-          headers: {'X-CSRFToken': csrftoken},
+          headers: {'X-CSRFToken': csrftoken.value},
           type: "POST",
           dataType: "json",
           url: "{% url 'gaharu/proses_tambah_data_master' %}",

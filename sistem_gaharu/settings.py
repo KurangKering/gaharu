@@ -128,6 +128,15 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-MATLAB_EXE = r"E:\MATLAB\r2017b\bin\matlab.exe"
-RUN_MATLAB = 0
+ROUNDING = 5
+
+#temukan dir matlab folder bin, lalu copy dan pastekan ke var MATLAB_EXE
+MATLAB_EXE = r"D:\MATLAB\R2017b\bin\matlab.exe"
+
+
+RUN_MATLAB = 1
+
+# buka windows explorer, terus tulis %temp% , lalu copy dan pastekan dir ke var TEMP_DIR
+TEMP_DIR = r'C:\Users\Popeye\AppData\Local\Temp'
+
 print("base dir path {}".format(BASE_DIR))

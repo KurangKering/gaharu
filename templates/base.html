@@ -76,6 +76,8 @@
   </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed" id="page-top">
+  {% csrf_token %}
+
   <div class="wrapper">
 
     <!-- Navbar -->
@@ -238,6 +240,8 @@
   axios.defaults.xsrfCookieName = 'csrftoken';
   axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN';
   var overlaySelector = document.querySelector("#overlay");
+  var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]');
+  
   
   </script>
   {% block export-js %}
