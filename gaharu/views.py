@@ -238,6 +238,10 @@ def proses_pelatihan(request):
     from gaharu.libraries.anfis_matlab import AnfisMatlab
     import matlab
     import matlab.engine
+    os.makedirs("media/fis", exist_ok=True)
+    os.makedirs("media/models", exist_ok=True)
+    os.makedirs("media/uploads", exist_ok=True)
+
     simpan = int(request.POST.get('simpan')
                  ) if request.POST.get('simpan') else -1
     epoch = int(request.POST.get('epoch')) if request.POST.get('epoch') else 1
