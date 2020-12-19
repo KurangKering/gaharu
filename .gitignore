@@ -1,6 +1,7 @@
+development/
 media/
 uploads/
-db.sqlite3
+*.sqlite3
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
