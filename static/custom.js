@@ -47,12 +47,11 @@
       return false;
     if (arguments[i] == null)
       return false;
+    if (arguments[i] == undefined)
+      return false;
   }
 
-  if (arguments.length > 0 )
-    return true;
-
-  return false
+  return true;
 
 }
 function sendCroppedImageToServer(actionsOnSendCroppedImage) {
