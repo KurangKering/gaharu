@@ -22,6 +22,7 @@ img {
 .modal-lg{
   max-width: 1000px !important;
 }
+
 </style>
 {% endblock css %}
 {% block content %}
@@ -112,7 +113,7 @@ img {
               <!-- /.card-header -->
               <div class="card-body">
 
-                <table class="table table-striped" id="table-data-latih">
+                <table class="table table-striped nowrap" id="table-data-latih">
                   <thead>
                     <tr>
                       <th>NO</th>
@@ -149,7 +150,7 @@ img {
               <!-- /.card-header -->
               <div class="card-body">
 
-                <table class="table table-striped" id="table-data-uji">
+                <table class="table table-striped nowrap" id="table-data-uji">
                   <thead>
                     <tr>
                       <th>NO</th>
@@ -166,6 +167,7 @@ img {
                       <th>PLW</th>
                       <th>KELAS</th>
                       <th>Kelas Prediksi</th>
+                      <th>Citra Prediksi</th>
                     </tr>
                   </thead>
 
@@ -202,7 +204,7 @@ img {
   {% block js %}
 
   <script>
-
+  var urlStatic = {% static "" %};
   var tableDataLatih = $("#table-data-latih").DataTable({
     "scrollX": true,
     "columns": [
@@ -241,6 +243,15 @@ img {
     { "data": "plw" },
     { "data": "kelas" },
     { "data": "kelas_predicted" },
+    { 
+      "data": "citra_prediksi",
+      "render": function(data, type, row, meta) {
+        if (data == null) {
+          return "";
+        }
+        return '<img src="'+urlStatic+data+'" alt="">';
+      }
+    },
     ],
     pageLength: 5,
 

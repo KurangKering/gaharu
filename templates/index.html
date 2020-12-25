@@ -48,7 +48,31 @@
   .swal2-container {
     z-index: 999999 !important;
   }
-  </style>
+
+  .text-hasil-pengujian {
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 36px;
+  }
+
+  .citra-prediksi {
+   margin-top: 0 ;
+   margin-bottom: 15px ;
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+   width: 200px;
+   height: 300px;
+ }
+
+ .citra-prediksi-label {
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: bolder;
+  font-size: 26px;
+}
+</style>
 </head>
 
 <body id="page-top">
@@ -253,10 +277,17 @@
         <div class="col-12">
           <div class="card">
             <div class="card-body">
-              <div class="text-center">
-                <h2 class="display-4">Hasil Klasifikasi</h2>
-                <p class="lead"><span id="kelas-hasil"></span></p>
+              <p class="text-hasil-pengujian">Hasil Pengujian</p>
+              <div id="place-result-here">
+                <div>
+                  <center>
+                    <img style="display:none" src="{% static "citra-kelas/subintegra.jpg" %}" alt="" class="citra-prediksi">
+                  </center>
+                  <p style="display:none" class="citra-prediksi-label"></p>
+                </div>
+
               </div>
+              
             </div>
           </div>
         </div>
@@ -332,12 +363,12 @@
   });
   $("#modal-large").iziModal('setZindex', 99999);
 
-
   var objModelId = { model_id: null };
   var model_id = null;
   var $inputImg = $("input[name='input-image']");
   var image = $("#image");
   var $btnKlasifikasi = $("#btn-klasifikasi");
+  var urlStatic = "{% static "" %}";
 
   var filename;
   var cropper;
@@ -394,18 +425,20 @@
         })
          .done(function(result) {
           if (result.success == 1) {
-            $("#place-result-here").html(result.predicted);
+            $(".citra-prediksi-label").text(result.kelas_hasil).show();
+            if (result.citra_prediksi != null) {
+             $(".citra-prediksi").attr("src", urlStatic+result.citra_prediksi).show();
+           }
 
-            $("#image-clean").attr("src", "data:image/png;base64," + (result.image_clean));
-            $("#image-gray").attr("src", "data:image/png;base64," + (result.image_gray));
-            $("#image-binary").attr("src", "data:image/png;base64," + (result.image_binary));
-            $("#kelas-hasil").text(result.kelas_hasil);
+           $("#image-clean").attr("src", "data:image/png;base64," + (result.image_clean));
+           $("#image-gray").attr("src", "data:image/png;base64," + (result.image_gray));
+           $("#image-binary").attr("src", "data:image/png;base64," + (result.image_binary));
 
-            $("#content-hasil").show();
-            var element = document.getElementById("content-hasil")
-            element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
-          }
-        })
+           $("#content-hasil").show();
+           var element = document.getElementById("content-hasil")
+           element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
+         }
+       })
          .always(function() {
           $("#modal-large").iziModal("stopLoading");
         })

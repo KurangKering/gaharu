@@ -13,7 +13,7 @@ from os.path import join
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from gaharu.models import Dataset, Model
 from django.conf import settings
-from utils.helper import get_second_value
+from utils.helper import get_second_value, get_url_citra
 
 
 def index(request):
@@ -117,6 +117,8 @@ def process_pengujian(request):
     if (predicted in nilai_kelas):
     	kelas_hasil = get_second_value(Dataset.KELAS_CHOICES, predicted)
 
+    citra_prediksi = get_url_citra(predicted)
+
     response = {
         'success': 1,
         'predicted': predicted,
@@ -126,7 +128,8 @@ def process_pengujian(request):
         'image_clean': image_clean,
         'image_gray': image_gray,
         'image_binary': image_binary,
-        'kelas_hasil': kelas_hasil
+        'kelas_hasil': kelas_hasil,
+        'citra_prediksi': citra_prediksi
 
     }
 
