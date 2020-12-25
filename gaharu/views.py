@@ -20,7 +20,7 @@ from os.path import join
 from django.conf import settings
 import csv
 import tempfile
-from utils.helper import get_second_value
+from utils.helper import get_second_value, get_url_citra
 import pandas as pd
 
 def index(request):
@@ -106,7 +106,6 @@ def proses_tambah_data_master(request):
 
 def hapus_data(request):
     data_id = request.POST.get('data_id')
-    print(data_id)
     data = Dataset.objects.get(id=data_id)
     data.filename.delete()
     data.delete()
@@ -148,7 +147,6 @@ def detail_gambar(request):
     return JsonResponse(context, safe=False)
 
 def download_csv(request):
-    print(request.GET.urlencode())
     tipe = request.GET.get("type")
     data_id = int(request.GET.get("id"))
 
@@ -322,9 +320,6 @@ def proses_pelatihan(request):
     dirwithfilename = join('models', filename + ".pkl")
     path = join(settings.MEDIA_ROOT, dirwithfilename)
 
-
-
-
     datalatih_ids = json.dumps(train_data_ids)
     datauji_ids = json.dumps(test_data_ids)
     accuracy = accuracy
@@ -358,6 +353,7 @@ def proses_pelatihan(request):
     train_data['kelas'] = train_data['kelas'].replace(nilai_kelas, label_kelas)
     test_data['kelas'] = test_data['kelas'].replace(nilai_kelas, label_kelas)
     test_data['kelas_predicted'] = test_data['kelas_predicted'].astype(int)
+    test_data['citra_prediksi'] = test_data['kelas_predicted'].map(lambda x: get_url_citra(x))
 
     for index, value in test_data['kelas_predicted'].items():
         if 0 <= value < len(label_kelas):
@@ -556,6 +552,7 @@ def proses_pengujian(request):
     if (predicted in nilai_kelas):
         kelas_hasil = get_second_value(Dataset.KELAS_CHOICES, predicted)
 
+    citra_prediksi = get_url_citra(predicted)
     response = {
         'success': 1,
         'predicted': predicted,
@@ -565,7 +562,8 @@ def proses_pengujian(request):
         'image_clean': image_clean,
         'image_gray': image_gray,
         'image_binary': image_binary,
-        'kelas_hasil': kelas_hasil
+        'kelas_hasil': kelas_hasil,
+        'citra_prediksi': citra_prediksi
 
     }
     return JsonResponse(response, safe=False)

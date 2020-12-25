@@ -24,6 +24,28 @@ img {
 .modal-lg{
   max-width: 1000px !important;
 }
+
+.text-hasil-pengujian {
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 36px;
+}
+
+.citra-prediksi {
+ max-width: 200px;
+ margin-top: 0 ;
+ margin-bottom: 15px ;
+ margin-right: auto ;
+ margin-left: auto ;
+}
+
+.citra-prediksi-label {
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: bolder;
+  font-size: 26px;
+}
 </style>
 {% endblock css %}
 {% block content %}
@@ -121,8 +143,13 @@ img {
             </div>
           </div>
           <div class="callout callout-info">
-            <h5>Hasil Pengujian:</h5>
+            <p class="text-hasil-pengujian">Hasil Pengujian</p>
             <div id="place-result-here">
+              <div>
+                <img style="display:none" src="{% static "citra-kelas/subintegra.jpg" %}" alt="" class="citra-prediksi">
+                <p style="display:none" class="citra-prediksi-label"></p>
+              </div>
+              
             </div>
           </div>
           <div class="card">
@@ -261,7 +288,7 @@ var $inputImg = $("input[name='input-image']");
 var image = $("#image");
 var filename;
 var cropper;
-
+var urlStatic = "{% static "" %}";
 setModelTableSelector('#table-model-anfis', objModelId);
 
 
@@ -316,7 +343,10 @@ var actionsOnSendCroppedImage = {
         })
         .done(function(result) {
           if (result.success == 1) {
-            $("#place-result-here").html(result.kelas_hasil);
+            $(".citra-prediksi-label").text(result.kelas_hasil).show();
+            if (result.citra_prediksi != null) {
+               $(".citra-prediksi").attr("src", urlStatic+result.citra_prediksi).show();
+            }
 
             $("#image-clean").attr("src", "data:image/png;base64,"+(result.image_clean));
             $("#image-gray").attr("src", "data:image/png;base64,"+(result.image_gray));
@@ -364,7 +394,8 @@ btnMulaiPengujian.click(function(event) {
 });
 
 function resetValues() {
-  $("#place-result-here").html("");
+  $(".citra-prediksi-label").text("").hide();
+  $(".citra-prediksi").attr("src", "").hide();
 
   $("#image").attr('src',"{% static 'images/empty-images.png' %}");
   $("#image-clean").attr("src", "{% static 'images/empty-images.png' %}");
