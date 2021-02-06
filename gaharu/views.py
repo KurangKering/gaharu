@@ -289,7 +289,7 @@ def proses_pelatihan(request):
     savefis = join(settings.MEDIA_ROOT, 'fis', filename + ".fis")
     dirfis = am.create_fis(X_train_scaled, Y_train.to_numpy(), radii, savefis)
 
-    am.mulai_pelatihan(X_train_scaled_with_class, dirfis, epoch, dirfis)
+    dirsavefis, rmse, stepsize = am.mulai_pelatihan(X_train_scaled_with_class, dirfis, epoch, dirfis)
     predicted = am.mulai_pengujian(X_test_scaled, dirfis)
     flat_predicted = np.concatenate(predicted)
     num_correct = int(np.sum(flat_predicted == Y_test_reshape))
@@ -315,6 +315,7 @@ def proses_pelatihan(request):
         'accuracy': accuracy,
         'num_correct': num_correct,
         'scaler':  scaler,
+        'rmse': rmse
     }
 
     dirwithfilename = join('models', filename + ".pkl")
@@ -367,6 +368,7 @@ def proses_pelatihan(request):
 
     table_train = json.loads(train_data.to_json(orient="records"))
     table_test = json.loads(test_data.to_json(orient="records"))
+    rmse = rmse.flatten().tolist()
     context = {
         "table_train": table_train,
         "table_test": table_test,
@@ -374,17 +376,9 @@ def proses_pelatihan(request):
         "total_data_test": total_data_test,
         "akurasi": accuracy,
         "epoch": epoch,
+        "rmse": rmse,
     }
 
-
-    context = {
-        "table_train": table_train,
-        "table_test": table_test,
-        "jumlah_benar": num_correct,
-        "total_data_test": total_data_test,
-        "akurasi": accuracy,
-        "epoch": epoch,
-    }
     return JsonResponse(context, safe=False)
 
 
